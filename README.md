@@ -4,13 +4,40 @@
 
 API de transacoes bancarias com autenticacao JWT, desenvolvida com Node.js, Express e SQLite.
 
-## Funcionalidades de Seguranca
+## Screenshots
 
+### Tela de Login
+![Login](docs/screenshots/01_login.png)
+
+A tela de login permite que usuarios existentes acessem o sistema com email e senha. Novos usuarios podem criar uma conta clicando na aba "Criar Conta".
+
+### Documentacao Swagger (API Docs)
+![Swagger](docs/screenshots/02_swagger.png)
+
+Documentacao interativa da API disponivel em `/api/docs`. Permite testar todos os endpoints diretamente no navegador.
+
+---
+
+## Funcionalidades
+
+### Frontend
+- **Dashboard**: Visao geral com saldo total e graficos de transacoes
+- **Contas**: Gerenciamento de contas bancarias (criar, editar, desativar)
+- **Transacoes**: Historico completo de movimentacoes
+- **Transferencia**: Transferencia entre contas do sistema
+- **PIX**: Transferencia instantanea por chave PIX (CPF/CNPJ)
+- **Dark/Light Mode**: Alterne entre temas claro e escuro
+- **Export PDF/CSV**: Exporte extratos em PDF ou CSV
+
+### Backend (API)
 - Autenticacao JWT com Refresh Tokens
 - Rate Limiting (100 req/min global, 5 tentativas de login/min)
 - Helmet (HTTP Security Headers)
 - Validacao de UUID e sanitizacao de inputs
 - Protecao contra brute force
+- WebSocket para atualizacoes em tempo real
+
+---
 
 ## Instalacao
 
@@ -36,7 +63,9 @@ docker-compose up --build
 
 A API estara disponivel em `http://localhost:3000`
 
-## Endpoints
+---
+
+## Endpoints da API
 
 ### Autenticacao
 
@@ -48,7 +77,7 @@ A API estara disponivel em `http://localhost:3000`
 | POST | `/api/auth/logout` | Invalidar refresh token |
 | GET | `/api/auth/me` | Dados do usuario atual |
 
-### Contas Bancarias (Protegido)
+### Contas Bancarias (Requer Autenticacao)
 
 | Metodo | Endpoint | Descricao |
 |--------|----------|-----------|
@@ -60,7 +89,7 @@ A API estara disponivel em `http://localhost:3000`
 | PUT | `/api/accounts/:id` | Atualizar conta |
 | DELETE | `/api/accounts/:id` | Desativar conta |
 
-### Transacoes (Protegido)
+### Transacoes (Requer Autenticacao)
 
 | Metodo | Endpoint | Descricao |
 |--------|----------|-----------|
@@ -71,12 +100,14 @@ A API estara disponivel em `http://localhost:3000`
 | POST | `/api/transactions/transfer` | Transferencia |
 | POST | `/api/transactions/pix` | Realizar PIX |
 
-### Documentacao
+### Utilitarios
 
 | Metodo | Endpoint | Descricao |
 |--------|----------|-----------|
 | GET | `/api/docs` | Swagger UI |
 | GET | `/api/health` | Status da API |
+
+---
 
 ## Exemplos de Uso
 
@@ -94,14 +125,7 @@ curl -X POST http://localhost:3000/api/auth/login \
   -d '{"email": "joao@email.com", "password": "senha123"}'
 ```
 
-### Renovar token
-```bash
-curl -X POST http://localhost:3000/api/auth/refresh \
-  -H "Content-Type: application/json" \
-  -d '{"refresh_token": "seu_refresh_token_aqui"}'
-```
-
-### Criar conta (autenticado)
+### Criar conta bancaria (autenticado)
 ```bash
 curl -X POST http://localhost:3000/api/accounts \
   -H "Content-Type: application/json" \
@@ -116,37 +140,56 @@ curl -X POST http://localhost:3000/api/accounts \
   }'
 ```
 
-## Stack
+### Realizar deposito
+```bash
+curl -X POST http://localhost:3000/api/transactions/deposit \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -d '{"account_id": "UUID_DA_CONTA", "amount": 500}'
+```
 
-- **Runtime:** Node.js 20
-- **Framework:** Express.js
-- **Database:** SQLite (sql.js)
-- **Auth:** JWT + Refresh Tokens
-- **Security:** Helmet, bcrypt, rate-limiting
-- **Docs:** Swagger/OpenAPI
-- **Tests:** Jest + Supertest
-- **CI/CD:** GitHub Actions
+---
 
-## Estrutura
+## Stack Tecnologica
+
+| Categoria | Tecnologia |
+|-----------|------------|
+| Runtime | Node.js 20 |
+| Framework | Express.js |
+| Database | SQLite (sql.js) |
+| Auth | JWT + Refresh Tokens |
+| Security | Helmet, bcrypt, rate-limiting |
+| Docs | Swagger/OpenAPI |
+| Tests | Jest + Supertest |
+| CI/CD | GitHub Actions |
+| Container | Docker |
+
+---
+
+## Estrutura do Projeto
 
 ```
 banking-api/
-├── src/
-│   ├── index.js          # Entry point
-│   ├── database.js       # SQLite setup
-│   ├── swagger.js        # OpenAPI config
-│   ├── middleware/
-│   │   └── security.js   # Security middlewares
-│   └── routes/
-│       ├── auth.js       # Authentication
-│       ├── accounts.js   # Accounts CRUD
-│       └── transactions.js
-├── public/               # Frontend
-├── tests/               # Jest tests
-├── .github/workflows/   # CI/CD
-├── Dockerfile
-└── docker-compose.yml
+|-- src/
+|   |-- index.js          # Entry point
+|   |-- database.js       # SQLite setup
+|   |-- swagger.js        # OpenAPI config
+|   |-- middleware/
+|   |   |-- security.js   # Security middlewares
+|   |-- routes/
+|       |-- auth.js       # Authentication
+|       |-- accounts.js   # Accounts CRUD
+|       |-- transactions.js
+|-- public/               # Frontend
+|-- tests/                # Jest tests
+|-- docs/                 # Documentation
+|   |-- screenshots/      # App screenshots
+|-- .github/workflows/    # CI/CD
+|-- Dockerfile
+|-- docker-compose.yml
 ```
+
+---
 
 ## Licenca
 
