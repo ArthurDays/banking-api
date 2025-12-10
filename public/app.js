@@ -22,6 +22,67 @@ function sanitizeHTML(str) {
     return temp.innerHTML;
 }
 
+// API Request Helper (automatically adds auth token)
+async function apiRequest(endpoint, options = {}) {
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers
+    };
+
+    if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+    }
+
+    const response = await fetch(`${API_URL}${endpoint}`, {
+        ...options,
+        headers
+    });
+
+    const result = await response.json();
+
+    // Handle token expired
+    if (response.status === 401 && result.code === 'TOKEN_EXPIRED') {
+        const refreshed = await refreshToken();
+        if (refreshed) {
+            headers['Authorization'] = `Bearer ${authToken}`;
+            const retryResponse = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
+            return retryResponse.json();
+        } else {
+            logout();
+            throw new Error('Session expired');
+        }
+    }
+
+    return result;
+}
+
+// Refresh Token
+let refreshTokenValue = localStorage.getItem('refreshToken');
+
+async function refreshToken() {
+    if (!refreshTokenValue) return false;
+
+    try {
+        const response = await fetch(`${API_URL}/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: refreshTokenValue })
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            authToken = result.data.accessToken;
+            refreshTokenValue = result.data.refreshToken;
+            localStorage.setItem('authToken', authToken);
+            localStorage.setItem('refreshToken', refreshTokenValue);
+            return true;
+        }
+        return false;
+    } catch (error) {
+        return false;
+    }
+}
+
 // CPF/CNPJ Mask
 function maskDocument(value) {
     const numbers = value.replace(/\D/g, '');
@@ -123,11 +184,13 @@ function initAuthForms() {
             const result = await response.json();
 
             if (result.success) {
-                authToken = result.data.token;
+                authToken = result.data.accessToken;
+                refreshTokenValue = result.data.refreshToken;
                 currentUser = result.data.user;
                 localStorage.setItem('authToken', authToken);
+                localStorage.setItem('refreshToken', refreshTokenValue);
                 showApp();
-                showToast('success', 'Bem-vindo!', `OlÃ¡, ${currentUser.name}`);
+                showToast('success', 'Bem-vindo!', `Ola, ${currentUser.name}`);
             } else {
                 showToast('error', 'Erro', result.error);
             }
@@ -152,9 +215,11 @@ function initAuthForms() {
             const result = await response.json();
 
             if (result.success) {
-                authToken = result.data.token;
+                authToken = result.data.accessToken;
+                refreshTokenValue = result.data.refreshToken;
                 currentUser = result.data.user;
                 localStorage.setItem('authToken', authToken);
+                localStorage.setItem('refreshToken', refreshTokenValue);
                 showApp();
                 showToast('success', 'Conta criada!', 'Bem-vindo ao NeoBank');
             } else {
@@ -572,13 +637,10 @@ async function handleNewAccount(e) {
     };
 
     try {
-        const response = await fetch(`${API_URL}/accounts`, {
+        const result = await apiRequest('/accounts', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-
-        const result = await response.json();
 
         if (result.success) {
             showToast('success', 'Sucesso!', 'Conta criada com sucesso');
@@ -589,7 +651,7 @@ async function handleNewAccount(e) {
             showToast('error', 'Erro', result.error);
         }
     } catch (error) {
-        showToast('error', 'Erro', 'NÃ£o foi possÃ­vel criar a conta');
+        showToast('error', 'Erro', 'Nao foi possivel criar a conta');
     }
 }
 
@@ -599,27 +661,24 @@ async function handleDeposit(e) {
     const data = {
         account_id: document.getElementById('deposit-account').value,
         amount: parseFloat(document.getElementById('deposit-amount').value),
-        description: 'DepÃ³sito via app'
+        description: 'Deposito via app'
     };
 
     try {
-        const response = await fetch(`${API_URL}/transactions/deposit`, {
+        const result = await apiRequest('/transactions/deposit', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
-        const result = await response.json();
-
         if (result.success) {
-            showToast('success', 'DepÃ³sito realizado!', `Novo saldo: ${result.data.formatted_balance}`);
+            showToast('success', 'Deposito realizado!', 'Novo saldo: ' + result.data.formatted_balance);
             e.target.reset();
             loadDashboard();
         } else {
             showToast('error', 'Erro', result.error);
         }
     } catch (error) {
-        showToast('error', 'Erro', 'NÃ£o foi possÃ­vel realizar o depÃ³sito');
+        showToast('error', 'Erro', 'Nao foi possivel realizar o deposito');
     }
 }
 
@@ -633,23 +692,20 @@ async function handleWithdraw(e) {
     };
 
     try {
-        const response = await fetch(`${API_URL}/transactions/withdraw`, {
+        const result = await apiRequest('/transactions/withdraw', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
-        const result = await response.json();
-
         if (result.success) {
-            showToast('success', 'Saque realizado!', `Novo saldo: ${result.data.formatted_balance}`);
+            showToast('success', 'Saque realizado!', 'Novo saldo: ' + result.data.formatted_balance);
             e.target.reset();
             loadDashboard();
         } else {
             showToast('error', 'Erro', result.error);
         }
     } catch (error) {
-        showToast('error', 'Erro', 'NÃ£o foi possÃ­vel realizar o saque');
+        showToast('error', 'Erro', 'Nao foi possivel realizar o saque');
     }
 }
 
@@ -660,27 +716,24 @@ async function handleTransfer(e) {
         source_account_id: document.getElementById('transfer-source').value,
         destination_account_id: document.getElementById('transfer-destination').value,
         amount: parseFloat(document.getElementById('transfer-amount').value),
-        description: document.getElementById('transfer-description').value || 'TransferÃªncia'
+        description: document.getElementById('transfer-description').value || 'Transferencia'
     };
 
     try {
-        const response = await fetch(`${API_URL}/transactions/transfer`, {
+        const result = await apiRequest('/transactions/transfer', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
-        const result = await response.json();
-
         if (result.success) {
-            showToast('success', 'TransferÃªncia realizada!', `Valor: ${formatCurrency(data.amount)}`);
+            showToast('success', 'Transferencia realizada!', 'Valor: ' + formatCurrency(data.amount));
             e.target.reset();
             loadDashboard();
         } else {
             showToast('error', 'Erro', result.error);
         }
     } catch (error) {
-        showToast('error', 'Erro', 'NÃ£o foi possÃ­vel realizar a transferÃªncia');
+        showToast('error', 'Erro', 'Nao foi possivel realizar a transferencia');
     }
 }
 
@@ -695,23 +748,20 @@ async function handlePix(e) {
     };
 
     try {
-        const response = await fetch(`${API_URL}/transactions/pix`, {
+        const result = await apiRequest('/transactions/pix', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
-        const result = await response.json();
-
         if (result.success) {
-            showToast('success', 'PIX enviado!', `Valor: ${formatCurrency(data.amount)}`);
+            showToast('success', 'PIX enviado!', 'Valor: ' + formatCurrency(data.amount));
             e.target.reset();
             loadDashboard();
         } else {
             showToast('error', 'Erro', result.error);
         }
     } catch (error) {
-        showToast('error', 'Erro', 'NÃ£o foi possÃ­vel enviar o PIX');
+        showToast('error', 'Erro', 'Nao foi possivel enviar o PIX');
     }
 }
 
@@ -928,9 +978,8 @@ async function deleteAccount(id) {
 
 async function getAccountStatement(accountId) {
     try {
-        const response = await fetch(${API_URL}/accounts//statement);
-        const data = await response.json();
-        return data.success ? data.data : null;
+        const result = await apiRequest(`/accounts/${accountId}/statement`);
+        return result.success ? result.data : null;
     } catch (error) {
         console.error('Erro ao buscar extrato:', error);
         return null;
@@ -945,7 +994,7 @@ async function exportStatementPDF(accountId) {
 
     const statement = await getAccountStatement(accountId);
     if (!statement) {
-        showToast('error', 'Erro', 'NÃ£o foi possÃ­vel gerar o extrato');
+        showToast('error', 'Erro', 'Nao foi possivel gerar o extrato');
         return;
     }
 
@@ -959,16 +1008,16 @@ async function exportStatementPDF(accountId) {
     doc.setFontSize(24);
     doc.text('NeoBank', 20, 25);
     doc.setFontSize(10);
-    doc.text('Extrato BancÃ¡rio', 20, 33);
+    doc.text('Extrato Bancario', 20, 33);
 
     // Account Info
     doc.setTextColor(30, 41, 59);
     doc.setFontSize(12);
-    doc.text(Titular: , 20, 55);
-    doc.text(CPF/CNPJ: , 20, 63);
-    doc.text(AgÃªncia:  | Conta: , 20, 71);
-    doc.text(Saldo Atual: , 20, 79);
-    doc.text(Data: , 20, 87);
+    doc.text('Titular: ' + account.holder_name, 20, 55);
+    doc.text('CPF/CNPJ: ' + maskDocument(account.document), 20, 63);
+    doc.text('Agencia: ' + account.agency + ' | Conta: ' + account.account_number, 20, 71);
+    doc.text('Saldo Atual: ' + formatCurrency(account.balance), 20, 79);
+    doc.text('Data: ' + new Date().toLocaleDateString('pt-BR'), 20, 87);
 
     // Transactions Table
     if (statement.transactions && statement.transactions.length > 0) {
@@ -981,17 +1030,17 @@ async function exportStatementPDF(accountId) {
 
         doc.autoTable({
             startY: 95,
-            head: [['Data', 'Tipo', 'DescriÃ§Ã£o', 'Valor']],
+            head: [['Data', 'Tipo', 'Descricao', 'Valor']],
             body: tableData,
             theme: 'striped',
             headStyles: { fillColor: [99, 102, 241] },
             styles: { fontSize: 9 }
         });
     } else {
-        doc.text('Nenhuma transaÃ§Ã£o encontrada', 20, 100);
+        doc.text('Nenhuma transacao encontrada', 20, 100);
     }
 
-    doc.save(extrato__.pdf);
+    doc.save('extrato_' + account.holder_name.replace(/\s+/g, '_') + '.pdf');
     showToast('success', 'PDF Gerado', 'Download iniciado');
 }
 
@@ -1003,27 +1052,28 @@ async function exportStatementCSV(accountId) {
 
     const statement = await getAccountStatement(accountId);
     if (!statement) {
-        showToast('error', 'Erro', 'NÃ£o foi possÃ­vel gerar o extrato');
+        showToast('error', 'Erro', 'Nao foi possivel gerar o extrato');
         return;
     }
 
-    let csv = 'Data,Tipo,DescriÃ§Ã£o,Valor\n';
-    
+    let csv = 'Data,Tipo,Descricao,Valor\n';
+
     if (statement.transactions && statement.transactions.length > 0) {
         statement.transactions.forEach(tx => {
-            csv += ${new Date(tx.created_at).toLocaleDateString('pt-BR')},;
-            csv += ${getTransactionLabel(tx.type)},;
-            csv += "",;
-            csv += ${tx.amount}\n;
+            const date = new Date(tx.created_at).toLocaleDateString('pt-BR');
+            const type = getTransactionLabel(tx.type);
+            const desc = (tx.description || '-').replace(/,/g, ';');
+            csv += date + ',' + type + ',"' + desc + '",' + tx.amount + '\n';
         });
     }
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = extrato__.csv;
+    link.download = 'extrato_' + account.holder_name.replace(/\s+/g, '_') + '.csv';
     link.click();
-    
+
     showToast('success', 'CSV Gerado', 'Download iniciado');
 }
+
 
