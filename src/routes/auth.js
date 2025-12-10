@@ -31,7 +31,7 @@ function authenticateToken(req, res, next) {
                     code: 'TOKEN_EXPIRED'
                 });
             }
-            return res.status(403).json({ success: false, error: 'Token inválido' });
+            return res.status(403).json({ success: false, error: 'Token invalido' });
         }
         req.user = user;
         next();
@@ -68,14 +68,14 @@ router.post('/register', async (req, res) => {
         if (!email || !password || !name) {
             return res.status(400).json({
                 success: false,
-                error: 'Campos obrigatórios: email, password, name'
+                error: 'Campos obrigatorios: email, password, name'
             });
         }
 
         if (!isValidEmail(email)) {
             return res.status(400).json({
                 success: false,
-                error: 'Formato de email inválido'
+                error: 'Formato de email invalido'
             });
         }
 
@@ -89,7 +89,7 @@ router.post('/register', async (req, res) => {
         // Check if email already exists
         const existingUser = queryOne('SELECT id FROM users WHERE email = ?', [email.toLowerCase()]);
         if (existingUser) {
-            return res.status(409).json({ success: false, error: 'Email já cadastrado' });
+            return res.status(409).json({ success: false, error: 'Email ja cadastrado' });
         }
 
         // Hash password
@@ -132,7 +132,7 @@ router.post('/login', loginRateLimiter, async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
-                error: 'Campos obrigatórios: email, password'
+                error: 'Campos obrigatorios: email, password'
             });
         }
 
@@ -179,7 +179,7 @@ router.post('/refresh', async (req, res) => {
         if (!refresh_token) {
             return res.status(400).json({
                 success: false,
-                error: 'Refresh token é obrigatório'
+                error: 'Refresh token e obrigatorio'
             });
         }
 
@@ -192,7 +192,7 @@ router.post('/refresh', async (req, res) => {
         if (!tokenRecord) {
             return res.status(401).json({
                 success: false,
-                error: 'Refresh token inválido ou revogado'
+                error: 'Refresh token invalido ou revogado'
             });
         }
 
@@ -211,7 +211,7 @@ router.post('/refresh', async (req, res) => {
         if (!user) {
             return res.status(401).json({
                 success: false,
-                error: 'Usuário não encontrado'
+                error: 'Usuario nao encontrado'
             });
         }
 
@@ -261,7 +261,7 @@ router.post('/logout', authenticateToken, (req, res) => {
 router.get('/me', authenticateToken, (req, res) => {
     const user = queryOne('SELECT id, email, name, role, created_at FROM users WHERE id = ?', [req.user.id]);
     if (!user) {
-        return res.status(404).json({ success: false, error: 'Usuário não encontrado' });
+        return res.status(404).json({ success: false, error: 'Usuario nao encontrado' });
     }
     res.json({ success: true, data: user });
 });
