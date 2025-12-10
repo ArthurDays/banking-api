@@ -865,14 +865,14 @@ function showAccountDetails(id) {
       <span style="font-size: 2rem; font-weight: 700; color: white;">${formatCurrency(account.balance)}</span>
     </div>
     <div style="display: flex; gap: 12px;">
-      <button class="btn btn-ghost" style="flex: 1;" onclick="showEditAccountForm('${account.id}')">
+      <button id="btn-edit-account" class="btn btn-ghost" style="flex: 1;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
         </svg>
         Editar
       </button>
-      <button class="btn btn-ghost" style="flex: 1; color: var(--error-500);" onclick="confirmDeleteAccount('${account.id}')">
+      <button id="btn-delete-account" class="btn btn-ghost" style="flex: 1; color: var(--error-500);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
           <polyline points="3 6 5 6 21 6"/>
           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -881,6 +881,16 @@ function showAccountDetails(id) {
       </button>
     </div>
   `;
+
+    // Add event listeners after inserting HTML
+    document.getElementById('btn-edit-account').addEventListener('click', function () {
+        showEditAccountForm(id);
+    });
+
+    document.getElementById('btn-delete-account').addEventListener('click', function () {
+        confirmDeleteAccount(id);
+    });
+
     openModal();
 }
 
