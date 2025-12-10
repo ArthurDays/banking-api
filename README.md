@@ -1,30 +1,30 @@
-﻿# ðŸ¦ NeoBank API
+﻿# NeoBank API
 
 [![CI/CD Pipeline](https://github.com/ArthurDays/banking-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ArthurDays/banking-api/actions/workflows/ci.yml)
 
-API de transaÃ§Ãµes bancÃ¡rias com autenticaÃ§Ã£o JWT, desenvolvida com Node.js, Express e SQLite.
+API de transacoes bancarias com autenticacao JWT, desenvolvida com Node.js, Express e SQLite.
 
-## ðŸ”’ Funcionalidades de SeguranÃ§a
+## Funcionalidades de Seguranca
 
-- âœ… AutenticaÃ§Ã£o JWT com Refresh Tokens
-- âœ… Rate Limiting (100 req/min global, 5 tentativas de login/min)
-- âœ… Helmet (HTTP Security Headers)
-- âœ… ValidaÃ§Ã£o de UUID e sanitizaÃ§Ã£o de inputs
-- âœ… ProteÃ§Ã£o contra brute force
+- Autenticacao JWT com Refresh Tokens
+- Rate Limiting (100 req/min global, 5 tentativas de login/min)
+- Helmet (HTTP Security Headers)
+- Validacao de UUID e sanitizacao de inputs
+- Protecao contra brute force
 
-## ðŸš€ InstalaÃ§Ã£o
+## Instalacao
 
 ```bash
 npm install
 ```
 
-## â–¶ï¸ Executar
+## Executar
 
 ```bash
 # Modo desenvolvimento (com hot reload)
 npm run dev
 
-# Modo produÃ§Ã£o
+# Modo producao
 npm start
 
 # Testes
@@ -34,57 +34,57 @@ npm test
 docker-compose up --build
 ```
 
-A API estarÃ¡ disponÃ­vel em `http://localhost:3000`
+A API estara disponivel em `http://localhost:3000`
 
-## ðŸ“š Endpoints
+## Endpoints
 
-### AutenticaÃ§Ã£o
+### Autenticacao
 
-| MÃ©todo | Endpoint | DescriÃ§Ã£o |
+| Metodo | Endpoint | Descricao |
 |--------|----------|-----------|
-| POST | `/api/auth/register` | Registrar novo usuÃ¡rio |
+| POST | `/api/auth/register` | Registrar novo usuario |
 | POST | `/api/auth/login` | Login (retorna access e refresh token) |
 | POST | `/api/auth/refresh` | Renovar access token |
 | POST | `/api/auth/logout` | Invalidar refresh token |
-| GET | `/api/auth/me` | Dados do usuÃ¡rio atual |
+| GET | `/api/auth/me` | Dados do usuario atual |
 
-### Contas BancÃ¡rias (ðŸ” Protegido)
+### Contas Bancarias (Protegido)
 
-| MÃ©todo | Endpoint | DescriÃ§Ã£o |
+| Metodo | Endpoint | Descricao |
 |--------|----------|-----------|
 | GET | `/api/accounts` | Listar todas as contas |
 | GET | `/api/accounts/:id` | Buscar conta por ID |
 | GET | `/api/accounts/:id/balance` | Consultar saldo |
 | GET | `/api/accounts/:id/statement` | Consultar extrato |
-| POST | `/api/accounts` | Criar nova conta ðŸ” |
-| PUT | `/api/accounts/:id` | Atualizar conta ðŸ” |
-| DELETE | `/api/accounts/:id` | Desativar conta ðŸ” |
+| POST | `/api/accounts` | Criar nova conta |
+| PUT | `/api/accounts/:id` | Atualizar conta |
+| DELETE | `/api/accounts/:id` | Desativar conta |
 
-### TransaÃ§Ãµes (ðŸ” Protegido)
+### Transacoes (Protegido)
 
-| MÃ©todo | Endpoint | DescriÃ§Ã£o |
+| Metodo | Endpoint | Descricao |
 |--------|----------|-----------|
-| GET | `/api/transactions` | Listar transaÃ§Ãµes |
-| GET | `/api/transactions/:id` | Buscar transaÃ§Ã£o |
-| POST | `/api/transactions/deposit` | Realizar depÃ³sito ðŸ” |
-| POST | `/api/transactions/withdraw` | Realizar saque ðŸ” |
-| POST | `/api/transactions/transfer` | TransferÃªncia ðŸ” |
-| POST | `/api/transactions/pix` | Realizar PIX ðŸ” |
+| GET | `/api/transactions` | Listar transacoes |
+| GET | `/api/transactions/:id` | Buscar transacao |
+| POST | `/api/transactions/deposit` | Realizar deposito |
+| POST | `/api/transactions/withdraw` | Realizar saque |
+| POST | `/api/transactions/transfer` | Transferencia |
+| POST | `/api/transactions/pix` | Realizar PIX |
 
-### DocumentaÃ§Ã£o
+### Documentacao
 
-| MÃ©todo | Endpoint | DescriÃ§Ã£o |
+| Metodo | Endpoint | Descricao |
 |--------|----------|-----------|
 | GET | `/api/docs` | Swagger UI |
 | GET | `/api/health` | Status da API |
 
-## ðŸ“ Exemplos de Uso
+## Exemplos de Uso
 
-### Registrar usuÃ¡rio
+### Registrar usuario
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"name": "JoÃ£o", "email": "joao@email.com", "password": "senha123"}'
+  -d '{"name": "Joao", "email": "joao@email.com", "password": "senha123"}'
 ```
 
 ### Login
@@ -107,7 +107,7 @@ curl -X POST http://localhost:3000/api/accounts \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer SEU_TOKEN" \
   -d '{
-    "holder_name": "JoÃ£o Silva",
+    "holder_name": "Joao Silva",
     "document": "12345678901",
     "bank_code": "001",
     "agency": "1234",
@@ -116,7 +116,7 @@ curl -X POST http://localhost:3000/api/accounts \
   }'
 ```
 
-## ðŸ› ï¸ Stack
+## Stack
 
 - **Runtime:** Node.js 20
 - **Framework:** Express.js
@@ -127,28 +127,27 @@ curl -X POST http://localhost:3000/api/accounts \
 - **Tests:** Jest + Supertest
 - **CI/CD:** GitHub Actions
 
-## ðŸ“ Estrutura
+## Estrutura
 
 ```
 banking-api/
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ index.js          # Entry point
-â”‚   â”œâ”€â”€ database.js       # SQLite setup
-â”‚   â”œâ”€â”€ swagger.js        # OpenAPI config
-â”‚   â”œâ”€â”€ middleware/
-â”‚   â”‚   â””â”€â”€ security.js   # Security middlewares
-â”‚   â””â”€â”€ routes/
-â”‚       â”œâ”€â”€ auth.js       # Authentication
-â”‚       â”œâ”€â”€ accounts.js   # Accounts CRUD
-â”‚       â””â”€â”€ transactions.js
-â”œâ”€â”€ public/               # Frontend
-â”œâ”€â”€ tests/               # Jest tests
-â”œâ”€â”€ .github/workflows/   # CI/CD
-â”œâ”€â”€ Dockerfile
-â””â”€â”€ docker-compose.yml
+├── src/
+│   ├── index.js          # Entry point
+│   ├── database.js       # SQLite setup
+│   ├── swagger.js        # OpenAPI config
+│   ├── middleware/
+│   │   └── security.js   # Security middlewares
+│   └── routes/
+│       ├── auth.js       # Authentication
+│       ├── accounts.js   # Accounts CRUD
+│       └── transactions.js
+├── public/               # Frontend
+├── tests/               # Jest tests
+├── .github/workflows/   # CI/CD
+├── Dockerfile
+└── docker-compose.yml
 ```
 
-## ðŸ“„ LicenÃ§a
+## Licenca
 
 MIT
-
