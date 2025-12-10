@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeoBank - Sistema BancÃ¡rio Digital</title>
-  <meta name="description" content="Sistema bancÃ¡rio digital moderno para gerenciamento de contas e transaÃ§Ãµes">
+  <title>NeoBank - Sistema Bancario Digital</title>
+  <meta name="description" content="Sistema bancario digital moderno para gerenciamento de contas e transacoes">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -34,7 +34,7 @@
           </div>
           <span class="logo-text">NeoBank</span>
         </div>
-        <p>Sistema BancÃ¡rio Digital</p>
+        <p>Sistema Bancario Digital</p>
       </div>
 
       <div class="login-tabs">
@@ -50,7 +50,7 @@
         </div>
         <div class="form-group">
           <label>Senha</label>
-          <input type="password" id="login-password" required placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
+          <input type="password" id="login-password" required placeholder="********">
         </div>
         <button type="submit" class="btn btn-primary btn-full">Entrar</button>
       </form>
@@ -67,7 +67,7 @@
         </div>
         <div class="form-group">
           <label>Senha</label>
-          <input type="password" id="register-password" required placeholder="MÃ­nimo 6 caracteres" minlength="6">
+          <input type="password" id="register-password" required placeholder="Minimo 6 caracteres" minlength="6">
         </div>
         <button type="submit" class="btn btn-primary btn-full">Criar Conta</button>
       </form>
@@ -115,7 +115,7 @@
             <line x1="12" y1="1" x2="12" y2="23" />
             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
           </svg>
-          <span>TransaÃ§Ãµes</span>
+          <span>Transacoes</span>
         </a>
         <a href="#" class="nav-item" data-section="transfer">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -148,23 +148,23 @@
       <header class="header">
         <div class="header-left">
           <h1 id="page-title">Dashboard</h1>
-          <p class="header-subtitle" id="page-subtitle">VisÃ£o geral das suas contas</p>
+          <p class="header-subtitle" id="page-subtitle">Visao geral das suas contas</p>
         </div>
         <div class="header-right">
           <button class="theme-toggle" id="theme-toggle" title="Alternar tema">
             <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="5"/>
-              <line x1="12" y1="1" x2="12" y2="3"/>
-              <line x1="12" y1="21" x2="12" y2="23"/>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-              <line x1="1" y1="12" x2="3" y2="12"/>
-              <line x1="21" y1="12" x2="23" y2="12"/>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
             </svg>
             <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
             </svg>
           </button>
           <button class="btn btn-primary" id="new-account-btn">
@@ -180,7 +180,7 @@
             </button>
             <div class="user-dropdown" id="user-dropdown">
               <div class="user-info">
-                <span id="user-name">UsuÃ¡rio</span>
+                <span id="user-name">Usuario</span>
                 <span id="user-email">email@example.com</span>
               </div>
               <button class="dropdown-item" id="logout-btn">
@@ -233,7 +233,7 @@
                 </svg>
               </div>
               <div class="stat-info">
-                <span class="stat-label">TransaÃ§Ãµes Hoje</span>
+                <span class="stat-label">Transacoes Hoje</span>
                 <span class="stat-value" id="total-transactions">0</span>
               </div>
             </div>
@@ -255,20 +255,20 @@
 
             <div class="card recent-transactions">
               <div class="card-header">
-                <h3>TransaÃ§Ãµes Recentes</h3>
+                <h3>Transacoes Recentes</h3>
                 <button class="btn btn-ghost btn-sm" onclick="loadTransactions()">Ver Todas</button>
               </div>
               <div class="card-content" id="transactions-list">
                 <div class="loading-state">
                   <div class="spinner"></div>
-                  <p>Carregando transaÃ§Ãµes...</p>
+                  <p>Carregando transacoes...</p>
                 </div>
               </div>
             </div>
 
             <div class="card chart-card">
               <div class="card-header">
-                <h3>Fluxo de TransaÃ§Ãµes</h3>
+                <h3>Fluxo de Transacoes</h3>
               </div>
               <div class="card-content" style="height: 250px;">
                 <canvas id="transactions-chart"></canvas>
@@ -296,13 +296,13 @@
         <section id="transactions-section" class="section">
           <div class="card">
             <div class="card-header">
-              <h3>HistÃ³rico de TransaÃ§Ãµes</h3>
+              <h3>Historico de Transacoes</h3>
               <div class="filter-group">
                 <select id="transaction-filter" class="select">
                   <option value="">Todas</option>
-                  <option value="deposit">DepÃ³sitos</option>
+                  <option value="deposit">Depositos</option>
                   <option value="withdraw">Saques</option>
-                  <option value="transfer">TransferÃªncias</option>
+                  <option value="transfer">Transferencias</option>
                   <option value="pix">PIX</option>
                 </select>
               </div>
@@ -310,7 +310,7 @@
             <div class="card-content" id="all-transactions-list">
               <div class="loading-state">
                 <div class="spinner"></div>
-                <p>Carregando transaÃ§Ãµes...</p>
+                <p>Carregando transacoes...</p>
               </div>
             </div>
           </div>
@@ -321,7 +321,7 @@
           <div class="transaction-form-container">
             <div class="card form-card">
               <div class="card-header">
-                <h3>Nova TransferÃªncia</h3>
+                <h3>Nova Transferencia</h3>
               </div>
               <form id="transfer-form" class="transaction-form">
                 <div class="form-group">
@@ -344,7 +344,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label>DescriÃ§Ã£o (opcional)</label>
+                  <label>Descricao (opcional)</label>
                   <input type="text" id="transfer-description" placeholder="Ex: Pagamento de aluguel">
                 </div>
                 <button type="submit" class="btn btn-primary btn-full">
@@ -360,7 +360,7 @@
             <div class="quick-actions">
               <div class="card">
                 <div class="card-header">
-                  <h3>DepÃ³sito RÃ¡pido</h3>
+                  <h3>Deposito Rapido</h3>
                 </div>
                 <form id="deposit-form" class="transaction-form">
                   <div class="form-group">
@@ -388,7 +388,7 @@
 
               <div class="card">
                 <div class="card-header">
-                  <h3>Saque RÃ¡pido</h3>
+                  <h3>Saque Rapido</h3>
                 </div>
                 <form id="withdraw-form" class="transaction-form">
                   <div class="form-group">
@@ -427,7 +427,7 @@
                   </svg>
                 </div>
                 <h3>Enviar PIX</h3>
-                <p>TransferÃªncia instantÃ¢nea</p>
+                <p>Transferencia instantanea</p>
               </div>
               <form id="pix-form" class="transaction-form">
                 <div class="form-group">
@@ -448,7 +448,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label>DescriÃ§Ã£o (opcional)</label>
+                  <label>Descricao (opcional)</label>
                   <input type="text" id="pix-description" placeholder="Ex: Pagamento">
                 </div>
                 <button type="submit" class="btn btn-pix btn-full">
@@ -484,24 +484,24 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>CÃ³digo do Banco</label>
+              <label>Codigo do Banco</label>
               <input type="text" id="account-bank" required placeholder="001">
             </div>
             <div class="form-group">
-              <label>AgÃªncia</label>
+              <label>Agencia</label>
               <input type="text" id="account-agency" required placeholder="0001">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>NÃºmero da Conta</label>
+              <label>Numero da Conta</label>
               <input type="text" id="account-number" required placeholder="12345-6">
             </div>
             <div class="form-group">
               <label>Tipo</label>
               <select id="account-type" class="select">
                 <option value="checking">Corrente</option>
-                <option value="savings">PoupanÃ§a</option>
+                <option value="savings">Poupanca</option>
               </select>
             </div>
           </div>
@@ -526,4 +526,3 @@
 </body>
 
 </html>
-
