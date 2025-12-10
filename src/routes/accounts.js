@@ -5,15 +5,15 @@ const { v4: uuidv4 } = require('uuid');
 const { authenticateToken } = require('./auth');
 const { validateUUID, sanitizeString, auditLog } = require('../middleware/security');
 
-// ValidaÃ§Ã£o de CPF
+// Validacao de CPF
 function validateCPF(cpf) {
     cpf = cpf.replace(/\D/g, '');
     if (cpf.length !== 11) return false;
 
-    // Verifica se todos os dÃ­gitos sÃ£o iguais
+    // Verifica se todos os digitos sao iguais
     if (/^(\d)\1{10}$/.test(cpf)) return false;
 
-    // ValidaÃ§Ã£o do primeiro dÃ­gito verificador
+    // Validacao do primeiro digito verificador
     let sum = 0;
     for (let i = 0; i < 9; i++) {
         sum += parseInt(cpf.charAt(i)) * (10 - i);
@@ -22,7 +22,7 @@ function validateCPF(cpf) {
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== parseInt(cpf.charAt(9))) return false;
 
-    // ValidaÃ§Ã£o do segundo dÃ­gito verificador
+    // Validacao do segundo digito verificador
     sum = 0;
     for (let i = 0; i < 10; i++) {
         sum += parseInt(cpf.charAt(i)) * (11 - i);
@@ -34,15 +34,15 @@ function validateCPF(cpf) {
     return true;
 }
 
-// ValidaÃ§Ã£o de CNPJ
+// Validacao de CNPJ
 function validateCNPJ(cnpj) {
     cnpj = cnpj.replace(/\D/g, '');
     if (cnpj.length !== 14) return false;
 
-    // Verifica se todos os dÃ­gitos sÃ£o iguais
+    // Verifica se todos os digitos sao iguais
     if (/^(\d)\1{13}$/.test(cnpj)) return false;
 
-    // ValidaÃ§Ã£o do primeiro dÃ­gito
+    // Validacao do primeiro digito
     let size = cnpj.length - 2;
     let numbers = cnpj.substring(0, size);
     const digits = cnpj.substring(size);
@@ -57,7 +57,7 @@ function validateCNPJ(cnpj) {
     let result = sum % 11 < 2 ? 0 : 11 - sum % 11;
     if (result !== parseInt(digits.charAt(0))) return false;
 
-    // ValidaÃ§Ã£o do segundo dÃ­gito
+    // Validacao do segundo digito
     size = size + 1;
     numbers = cnpj.substring(0, size);
     sum = 0;
@@ -102,7 +102,7 @@ router.get('/:id', validateUUID('id'), (req, res) => {
         const account = queryOne('SELECT * FROM accounts WHERE id = ?', [req.params.id]);
 
         if (!account) {
-            return res.status(404).json({ success: false, error: 'Conta nÃ£o encontrada' });
+            return res.status(404).json({ success: false, error: 'Conta nao encontrada' });
         }
 
         res.json({ success: true, data: account });
@@ -117,7 +117,7 @@ router.get('/:id/balance', validateUUID('id'), (req, res) => {
         const account = queryOne('SELECT id, holder_name, balance FROM accounts WHERE id = ?', [req.params.id]);
 
         if (!account) {
-            return res.status(404).json({ success: false, error: 'Conta nÃ£o encontrada' });
+            return res.status(404).json({ success: false, error: 'Conta nao encontrada' });
         }
 
         res.json({
@@ -140,7 +140,7 @@ router.get('/:id/statement', validateUUID('id'), (req, res) => {
         const account = queryOne('SELECT * FROM accounts WHERE id = ?', [req.params.id]);
 
         if (!account) {
-            return res.status(404).json({ success: false, error: 'Conta nÃ£o encontrada' });
+            return res.status(404).json({ success: false, error: 'Conta nao encontrada' });
         }
 
         const transactions = query(
@@ -173,11 +173,11 @@ router.post('/', authenticateToken, (req, res) => {
     try {
         const { holder_name, document, bank_code, agency, account_number, account_type, initial_balance } = req.body;
 
-        // ValidaÃ§Ãµes
+        // Validacoes
         if (!holder_name || !document || !bank_code || !agency || !account_number) {
             return res.status(400).json({
                 success: false,
-                error: 'Campos obrigatÃ³rios: holder_name, document, bank_code, agency, account_number'
+                error: 'Campos obrigatorios: holder_name, document, bank_code, agency, account_number'
             });
         }
 
@@ -185,19 +185,19 @@ router.post('/', authenticateToken, (req, res) => {
         if (!validateDocument(document)) {
             return res.status(400).json({
                 success: false,
-                error: 'CPF ou CNPJ invÃ¡lido'
+                error: 'CPF ou CNPJ invalido'
             });
         }
 
-        // Verificar se documento jÃ¡ existe
+        // Verificar se documento ja existe
         const existing = queryOne('SELECT id FROM accounts WHERE document = ?', [document.replace(/\D/g, '')]);
         if (existing) {
-            return res.status(409).json({ success: false, error: 'Documento jÃ¡ cadastrado' });
+            return res.status(409).json({ success: false, error: 'Documento ja cadastrado' });
         }
 
-                // Sanitize inputs
+        // Sanitize inputs
         const sanitizedName = sanitizeString(holder_name);
-        
+
         const id = uuidv4();
         const balance = initial_balance || 0;
         const now = new Date().toISOString();
@@ -223,7 +223,7 @@ router.put('/:id', authenticateToken, validateUUID('id'), (req, res) => {
         const account = queryOne('SELECT * FROM accounts WHERE id = ?', [req.params.id]);
 
         if (!account) {
-            return res.status(404).json({ success: false, error: 'Conta nÃ£o encontrada' });
+            return res.status(404).json({ success: false, error: 'Conta nao encontrada' });
         }
 
         const now = new Date().toISOString();
@@ -245,7 +245,7 @@ router.delete('/:id', authenticateToken, validateUUID('id'), (req, res) => {
         const account = queryOne('SELECT * FROM accounts WHERE id = ?', [req.params.id]);
 
         if (!account) {
-            return res.status(404).json({ success: false, error: 'Conta nÃ£o encontrada' });
+            return res.status(404).json({ success: false, error: 'Conta nao encontrada' });
         }
 
         const now = new Date().toISOString();
@@ -258,4 +258,3 @@ router.delete('/:id', authenticateToken, validateUUID('id'), (req, res) => {
 });
 
 module.exports = router;
-

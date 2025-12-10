@@ -170,23 +170,23 @@ curl -X POST http://localhost:3000/api/transactions/deposit \
 
 ```
 banking-api/
-|-- src/
-|   |-- index.js          # Entry point
-|   |-- database.js       # SQLite setup
-|   |-- swagger.js        # OpenAPI config
-|   |-- middleware/
-|   |   |-- security.js   # Security middlewares
-|   |-- routes/
-|       |-- auth.js       # Authentication
-|       |-- accounts.js   # Accounts CRUD
-|       |-- transactions.js
-|-- public/               # Frontend
-|-- tests/                # Jest tests
-|-- docs/                 # Documentation
-|   |-- screenshots/      # App screenshots
-|-- .github/workflows/    # CI/CD
-|-- Dockerfile
-|-- docker-compose.yml
+    src/
+        index.js          - Entry point
+        database.js       - SQLite setup
+        swagger.js        - OpenAPI config
+        middleware/
+            security.js   - Security middlewares
+        routes/
+            auth.js       - Authentication
+            accounts.js   - Accounts CRUD
+            transactions.js
+    public/               - Frontend
+    tests/                - Jest tests
+    docs/                 - Documentation
+        screenshots/      - App screenshots
+    .github/workflows/    - CI/CD
+    Dockerfile
+    docker-compose.yml
 ```
 
 ---

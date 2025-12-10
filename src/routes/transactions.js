@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const { authenticateToken } = require('./auth');
 const { validateUUID, isValidAmount, auditLog } = require('../middleware/security');
 
-// Listar todas as transaÃ§Ãµes
+// Listar todas as transacoes
 router.get('/', (req, res) => {
     try {
         const { limit = 50, offset = 0, type } = req.query;
@@ -33,13 +33,13 @@ router.get('/', (req, res) => {
     }
 });
 
-// Buscar transaÃ§Ã£o por ID
-router.get('/:id', (req, res) => {
+// Buscar transacao por ID
+router.get('/:id', validateUUID('id'), (req, res) => {
     try {
         const transaction = queryOne('SELECT * FROM transactions WHERE id = ?', [req.params.id]);
 
         if (!transaction) {
-            return res.status(404).json({ success: false, error: 'TransaÃ§Ã£o nÃ£o encontrada' });
+            return res.status(404).json({ success: false, error: 'Transacao nao encontrada' });
         }
 
         res.json({ success: true, data: transaction });
@@ -48,29 +48,29 @@ router.get('/:id', (req, res) => {
     }
 });
 
-// DepÃ³sito
-router.post('/deposit', (req, res) => {
+// Deposito (protegido)
+router.post('/deposit', authenticateToken, (req, res) => {
     try {
         const { account_id, amount, description } = req.body;
 
         if (!account_id || !amount) {
             return res.status(400).json({
                 success: false,
-                error: 'Campos obrigatÃ³rios: account_id, amount'
+                error: 'Campos obrigatorios: account_id, amount'
             });
         }
 
         if (amount <= 0) {
             return res.status(400).json({
                 success: false,
-                error: 'O valor do depÃ³sito deve ser maior que zero'
+                error: 'O valor do deposito deve ser maior que zero'
             });
         }
 
         const account = queryOne('SELECT * FROM accounts WHERE id = ? AND status = ?', [account_id, 'active']);
 
         if (!account) {
-            return res.status(404).json({ success: false, error: 'Conta nÃ£o encontrada ou inativa' });
+            return res.status(404).json({ success: false, error: 'Conta nao encontrada ou inativa' });
         }
 
         const transactionId = uuidv4();
@@ -80,14 +80,19 @@ router.post('/deposit', (req, res) => {
         // Atualizar saldo
         run('UPDATE accounts SET balance = ?, updated_at = ? WHERE id = ?', [newBalance, now, account_id]);
 
-        // Registrar transaÃ§Ã£o
+        // Registrar transacao
         run(
             `INSERT INTO transactions (id, type, amount, description, destination_account_id, status, created_at)
        VALUES (?, 'deposit', ?, ?, ?, 'completed', ?)`,
-            [transactionId, amount, description || 'DepÃ³sito em conta', account_id, now]
+            [transactionId, amount, description || 'Deposito em conta', account_id, now]
         );
 
         const transaction = queryOne('SELECT * FROM transactions WHERE id = ?', [transactionId]);
+
+        // Broadcast update
+        if (global.broadcast) {
+            global.broadcast('DEPOSIT', { transaction, account_id, new_balance: newBalance });
+        }
 
         res.status(201).json({
             success: true,
@@ -110,7 +115,7 @@ router.post('/withdraw', authenticateToken, (req, res) => {
         if (!account_id || !amount) {
             return res.status(400).json({
                 success: false,
-                error: 'Campos obrigatÃ³rios: account_id, amount'
+                error: 'Campos obrigatorios: account_id, amount'
             });
         }
 
@@ -124,7 +129,7 @@ router.post('/withdraw', authenticateToken, (req, res) => {
         const account = queryOne('SELECT * FROM accounts WHERE id = ? AND status = ?', [account_id, 'active']);
 
         if (!account) {
-            return res.status(404).json({ success: false, error: 'Conta nÃ£o encontrada ou inativa' });
+            return res.status(404).json({ success: false, error: 'Conta nao encontrada ou inativa' });
         }
 
         if (account.balance < amount) {
@@ -142,7 +147,7 @@ router.post('/withdraw', authenticateToken, (req, res) => {
         // Atualizar saldo
         run('UPDATE accounts SET balance = ?, updated_at = ? WHERE id = ?', [newBalance, now, account_id]);
 
-        // Registrar transaÃ§Ã£o
+        // Registrar transacao
         run(
             `INSERT INTO transactions (id, type, amount, description, source_account_id, status, created_at)
        VALUES (?, 'withdraw', ?, ?, ?, 'completed', ?)`,
@@ -150,6 +155,11 @@ router.post('/withdraw', authenticateToken, (req, res) => {
         );
 
         const transaction = queryOne('SELECT * FROM transactions WHERE id = ?', [transactionId]);
+
+        // Broadcast update
+        if (global.broadcast) {
+            global.broadcast('WITHDRAW', { transaction, account_id, new_balance: newBalance });
+        }
 
         res.status(201).json({
             success: true,
@@ -164,29 +174,29 @@ router.post('/withdraw', authenticateToken, (req, res) => {
     }
 });
 
-// TransferÃªncia
-router.post('/transfer', (req, res) => {
+// Transferencia (protegido)
+router.post('/transfer', authenticateToken, (req, res) => {
     try {
         const { source_account_id, destination_account_id, amount, description } = req.body;
 
         if (!source_account_id || !destination_account_id || !amount) {
             return res.status(400).json({
                 success: false,
-                error: 'Campos obrigatÃ³rios: source_account_id, destination_account_id, amount'
+                error: 'Campos obrigatorios: source_account_id, destination_account_id, amount'
             });
         }
 
         if (source_account_id === destination_account_id) {
             return res.status(400).json({
                 success: false,
-                error: 'Conta de origem e destino nÃ£o podem ser iguais'
+                error: 'Conta de origem e destino nao podem ser iguais'
             });
         }
 
         if (amount <= 0) {
             return res.status(400).json({
                 success: false,
-                error: 'O valor da transferÃªncia deve ser maior que zero'
+                error: 'O valor da transferencia deve ser maior que zero'
             });
         }
 
@@ -194,11 +204,11 @@ router.post('/transfer', (req, res) => {
         const destAccount = queryOne('SELECT * FROM accounts WHERE id = ? AND status = ?', [destination_account_id, 'active']);
 
         if (!sourceAccount) {
-            return res.status(404).json({ success: false, error: 'Conta de origem nÃ£o encontrada ou inativa' });
+            return res.status(404).json({ success: false, error: 'Conta de origem nao encontrada ou inativa' });
         }
 
         if (!destAccount) {
-            return res.status(404).json({ success: false, error: 'Conta de destino nÃ£o encontrada ou inativa' });
+            return res.status(404).json({ success: false, error: 'Conta de destino nao encontrada ou inativa' });
         }
 
         if (sourceAccount.balance < amount) {
@@ -220,14 +230,19 @@ router.post('/transfer', (req, res) => {
         // Creditar na conta destino
         run('UPDATE accounts SET balance = ?, updated_at = ? WHERE id = ?', [destNewBalance, now, destination_account_id]);
 
-        // Registrar transaÃ§Ã£o
+        // Registrar transacao
         run(
             `INSERT INTO transactions (id, type, amount, description, source_account_id, destination_account_id, status, created_at)
        VALUES (?, 'transfer', ?, ?, ?, ?, 'completed', ?)`,
-            [transactionId, amount, description || 'TransferÃªncia entre contas', source_account_id, destination_account_id, now]
+            [transactionId, amount, description || 'Transferencia entre contas', source_account_id, destination_account_id, now]
         );
 
         const transaction = queryOne('SELECT * FROM transactions WHERE id = ?', [transactionId]);
+
+        // Broadcast update
+        if (global.broadcast) {
+            global.broadcast('TRANSFER', { transaction, source_account_id, destination_account_id });
+        }
 
         res.status(201).json({
             success: true,
@@ -258,7 +273,7 @@ router.post('/pix', authenticateToken, (req, res) => {
         if (!source_account_id || !amount || (!destination_account_id && !pix_key)) {
             return res.status(400).json({
                 success: false,
-                error: 'Campos obrigatÃ³rios: source_account_id, amount, e destination_account_id ou pix_key'
+                error: 'Campos obrigatorios: source_account_id, amount, e destination_account_id ou pix_key'
             });
         }
 
@@ -272,7 +287,7 @@ router.post('/pix', authenticateToken, (req, res) => {
         const sourceAccount = queryOne('SELECT * FROM accounts WHERE id = ? AND status = ?', [source_account_id, 'active']);
 
         if (!sourceAccount) {
-            return res.status(404).json({ success: false, error: 'Conta de origem nÃ£o encontrada ou inativa' });
+            return res.status(404).json({ success: false, error: 'Conta de origem nao encontrada ou inativa' });
         }
 
         // Buscar conta destino por ID ou documento (simulando chave PIX)
@@ -284,13 +299,13 @@ router.post('/pix', authenticateToken, (req, res) => {
         }
 
         if (!destAccount) {
-            return res.status(404).json({ success: false, error: 'Conta de destino nÃ£o encontrada' });
+            return res.status(404).json({ success: false, error: 'Conta de destino nao encontrada' });
         }
 
         if (sourceAccount.id === destAccount.id) {
             return res.status(400).json({
                 success: false,
-                error: 'Conta de origem e destino nÃ£o podem ser iguais'
+                error: 'Conta de origem e destino nao podem ser iguais'
             });
         }
 
@@ -313,7 +328,7 @@ router.post('/pix', authenticateToken, (req, res) => {
         // Creditar na conta destino
         run('UPDATE accounts SET balance = ?, updated_at = ? WHERE id = ?', [destNewBalance, now, destAccount.id]);
 
-        // Registrar transaÃ§Ã£o
+        // Registrar transacao
         run(
             `INSERT INTO transactions (id, type, amount, description, source_account_id, destination_account_id, status, created_at)
        VALUES (?, 'pix', ?, ?, ?, ?, 'completed', ?)`,
@@ -321,6 +336,11 @@ router.post('/pix', authenticateToken, (req, res) => {
         );
 
         const transaction = queryOne('SELECT * FROM transactions WHERE id = ?', [transactionId]);
+
+        // Broadcast update
+        if (global.broadcast) {
+            global.broadcast('PIX', { transaction, source_account_id, destination_account_id: destAccount.id });
+        }
 
         res.status(201).json({
             success: true,
@@ -344,4 +364,3 @@ router.post('/pix', authenticateToken, (req, res) => {
 });
 
 module.exports = router;
-
