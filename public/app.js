@@ -1070,4 +1070,15 @@ async function exportStatementCSV(accountId) {
     showToast('success', 'CSV Gerado', 'Download iniciado');
 }
 
-
+// Expose functions globally for onclick handlers
+window.closeModal = closeModal;
+window.openModal = openModal;
+window.showAccountDetails = showAccountDetails;
+window.showEditAccountForm = showEditAccountForm;
+window.confirmDeleteAccount = confirmDeleteAccount;
+window.deleteAccount = deleteAccount;
+window.loadAccounts = loadAccounts;
+window.loadTransactions = loadTransactions;
+window.loadDashboard = loadDashboard;
+window.exportStatementPDF = exportStatementPDF;
+window.exportStatementCSV = exportStatementCSV;
