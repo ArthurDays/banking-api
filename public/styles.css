@@ -185,7 +185,7 @@ body::before {
   backdrop-filter: blur(20px);
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 100;
 }
 
 .header h1 {
@@ -578,6 +578,11 @@ input:focus,
   background-position: right 12px center;
   background-size: 18px;
   padding-right: 40px;
+}
+
+.select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .input-with-prefix {

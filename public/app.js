@@ -765,15 +765,22 @@ async function handlePix(e) {
 
 // Modal
 function openModal() {
-    modalOverlay.classList.add('active');
+    const modalOverlay = document.getElementById('modal-overlay');
+    if (modalOverlay) modalOverlay.classList.add('active');
 }
 
 function closeModal() {
-    modalOverlay.classList.remove('active');
+    const modalOverlay = document.getElementById('modal-overlay');
+    if (modalOverlay) modalOverlay.classList.remove('active');
 }
 
-modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) closeModal();
+document.addEventListener('DOMContentLoaded', () => {
+    const modalOverlay = document.getElementById('modal-overlay');
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModal();
+        });
+    }
 });
 
 // Toast Notifications
