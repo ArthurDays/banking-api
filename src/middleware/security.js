@@ -78,14 +78,14 @@ function validateUUID(paramName = 'id') {
         if (!uuid) {
             return res.status(400).json({
                 success: false,
-                error: `Parâmetro ${paramName} é obrigatório`
+                error: `Parametro ${paramName} e obrigatorio`
             });
         }
 
         if (!uuidValidate(uuid, 4)) {
             return res.status(400).json({
                 success: false,
-                error: `ID inválido: ${paramName} deve ser um UUID válido`
+                error: `ID invalido: ${paramName} deve ser um UUID valido`
             });
         }
 

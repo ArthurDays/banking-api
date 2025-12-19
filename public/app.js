@@ -446,8 +446,7 @@ function renderTransactionChart() {
 // Load Accounts
 async function loadAccounts() {
     try {
-        const response = await fetch(`${API_URL}/accounts`);
-        const data = await response.json();
+        const data = await apiRequest('/accounts');
 
         if (data.success) {
             accounts = data.data;
@@ -481,7 +480,7 @@ function renderAccountsList(containerId) {
       <div class="account-avatar">${sanitizeHTML(getInitials(account.holder_name))}</div>
       <div class="account-info">
         <div class="account-name">${sanitizeHTML(account.holder_name)}</div>
-        <div class="account-details">Ag ${sanitizeHTML(account.agency)} â€¢ Conta ${sanitizeHTML(account.account_number)}</div>
+        <div class="account-details">Ag ${sanitizeHTML(account.agency)} | Conta ${sanitizeHTML(account.account_number)}</div>
       </div>
       <div class="account-balance">
         <div class="account-balance-value">${formatCurrency(account.balance)}</div>
@@ -494,11 +493,10 @@ function renderAccountsList(containerId) {
 // Load Transactions
 async function loadTransactions(type = '') {
     try {
-        let url = `${API_URL}/transactions?limit=10`;
-        if (type) url += `&type=${type}`;
+        let endpoint = '/transactions?limit=10';
+        if (type) endpoint += `&type=${type}`;
 
-        const response = await fetch(url);
-        const data = await response.json();
+        const data = await apiRequest(endpoint);
 
         if (data.success) {
             transactions = data.data;
@@ -555,11 +553,10 @@ async function loadAllTransactions() {
     const filter = document.getElementById('transaction-filter').value;
 
     try {
-        let url = `${API_URL}/transactions?limit=50`;
-        if (filter) url += `&type=${filter}`;
+        let endpoint = '/transactions?limit=50';
+        if (filter) endpoint += `&type=${filter}`;
 
-        const response = await fetch(url);
-        const data = await response.json();
+        const data = await apiRequest(endpoint);
 
         if (data.success) {
             transactions = data.data;
@@ -910,12 +907,10 @@ function showEditAccountForm(id) {
         const holderName = document.getElementById('edit-holder-name').value;
 
         try {
-            const response = await fetch(`${API_URL}/accounts/${id}`, {
+            const result = await apiRequest(`/accounts/${id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ holder_name: holderName })
             });
-            const result = await response.json();
 
             if (result.success) {
                 showToast('success', 'Sucesso!', 'Conta atualizada');
@@ -957,8 +952,7 @@ function confirmDeleteAccount(id) {
 
 async function deleteAccount(id) {
     try {
-        const response = await fetch(`${API_URL}/accounts/${id}`, { method: 'DELETE' });
-        const result = await response.json();
+        const result = await apiRequest(`/accounts/${id}`, { method: 'DELETE' });
 
         if (result.success) {
             showToast('success', 'Conta desativada', 'A conta foi desativada com sucesso');
