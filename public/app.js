@@ -145,7 +145,7 @@ function handleWebSocketMessage(message) {
 
     switch (message.type) {
         case 'transaction':
-            showToast('info', 'Nova transaÃ§Ã£o', message.data.description || 'TransaÃ§Ã£o realizada');
+            showToast('info', 'Nova transacao', message.data.description || 'Transacao realizada');
             loadDashboard();
             break;
         case 'balance_update':
@@ -195,7 +195,7 @@ function initAuthForms() {
                 showToast('error', 'Erro', result.error);
             }
         } catch (error) {
-            showToast('error', 'Erro', 'NÃ£o foi possÃ­vel fazer login');
+            showToast('error', 'Erro', 'Nao foi possivel fazer login');
         }
     });
 
@@ -226,7 +226,7 @@ function initAuthForms() {
                 showToast('error', 'Erro', result.error);
             }
         } catch (error) {
-            showToast('error', 'Erro', 'NÃ£o foi possÃ­vel criar a conta');
+            showToast('error', 'Erro', 'Nao foi possivel criar a conta');
         }
     });
 }
@@ -365,11 +365,11 @@ function navigateTo(section) {
 
     // Update header
     const titles = {
-        dashboard: ['Dashboard', 'VisÃ£o geral das suas contas'],
-        accounts: ['Contas', 'Gerencie suas contas bancÃ¡rias'],
-        transactions: ['TransaÃ§Ãµes', 'HistÃ³rico de movimentaÃ§Ãµes'],
+        dashboard: ['Dashboard', 'Visao geral das suas contas'],
+        accounts: ['Contas', 'Gerencie suas contas bancarias'],
+        transactions: ['Transacoes', 'Historico de movimentacoes'],
         transfer: ['Transferir', 'Envie dinheiro entre contas'],
-        pix: ['PIX', 'TransferÃªncia instantÃ¢nea']
+        pix: ['PIX', 'Transferencia instantanea']
     };
 
     pageTitle.textContent = titles[section][0];
@@ -412,7 +412,7 @@ function renderTransactionChart() {
     transactionChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['DepÃ³sitos', 'Saques', 'TransferÃªncias', 'PIX'],
+            labels: ['Depositos', 'Saques', 'Transferencias', 'PIX'],
             datasets: [{
                 data: [deposits, withdrawals, transfers, pix],
                 backgroundColor: [
@@ -456,7 +456,7 @@ async function loadAccounts() {
         }
     } catch (error) {
         console.error('Erro ao carregar contas:', error);
-        showToast('error', 'Erro', 'NÃ£o foi possÃ­vel carregar as contas');
+        showToast('error', 'Erro', 'Nao foi possivel carregar as contas');
     }
 }
 
@@ -485,7 +485,7 @@ function renderAccountsList(containerId) {
       </div>
       <div class="account-balance">
         <div class="account-balance-value">${formatCurrency(account.balance)}</div>
-        <div class="account-balance-label">Saldo disponÃ­vel</div>
+        <div class="account-balance-label">Saldo disponivel</div>
       </div>
     </div>
   `).join('');
@@ -505,7 +505,7 @@ async function loadTransactions(type = '') {
             renderTransactionsList('transactions-list');
         }
     } catch (error) {
-        console.error('Erro ao carregar transaÃ§Ãµes:', error);
+        console.error('Erro ao carregar transacoes:', error);
     }
 }
 
@@ -519,7 +519,7 @@ function renderTransactionsList(containerId) {
           <line x1="12" y1="1" x2="12" y2="23"/>
           <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
         </svg>
-        <p>Nenhuma transaÃ§Ã£o realizada</p>
+        <p>Nenhuma transacao realizada</p>
       </div>
     `;
         return;
@@ -828,7 +828,7 @@ function getTransactionIcon(type) {
 }
 
 function getTransactionLabel(type) {
-    const labels = { deposit: 'DepÃ³sito', withdraw: 'Saque', transfer: 'TransferÃªncia', pix: 'PIX' };
+    const labels = { deposit: 'Deposito', withdraw: 'Saque', transfer: 'Transferencia', pix: 'PIX' };
     return labels[type] || type;
 }
 
@@ -851,7 +851,7 @@ function showAccountDetails(id) {
         <span>${sanitizeHTML(account.bank_code)}</span>
       </div>
       <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-        <span style="color: var(--gray-400);">AgÃªncia</span>
+        <span style="color: var(--gray-400);">Agencia</span>
         <span>${sanitizeHTML(account.agency)}</span>
       </div>
       <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
@@ -860,11 +860,11 @@ function showAccountDetails(id) {
       </div>
       <div style="display: flex; justify-content: space-between;">
         <span style="color: var(--gray-400);">Tipo</span>
-        <span>${account.account_type === 'checking' ? 'Corrente' : 'PoupanÃ§a'}</span>
+        <span>${account.account_type === 'checking' ? 'Corrente' : 'Poupanca'}</span>
       </div>
     </div>
     <div style="text-align: center; padding: 24px; background: var(--gradient-1); border-radius: 12px; margin-bottom: 16px;">
-      <span style="display: block; color: rgba(255,255,255,0.8); font-size: 0.875rem; margin-bottom: 4px;">Saldo DisponÃ­vel</span>
+      <span style="display: block; color: rgba(255,255,255,0.8); font-size: 0.875rem; margin-bottom: 4px;">Saldo Disponivel</span>
       <span style="font-size: 2rem; font-weight: 700; color: white;">${formatCurrency(account.balance)}</span>
     </div>
     <div style="display: flex; gap: 12px;">
@@ -925,7 +925,7 @@ function showEditAccountForm(id) {
                 showToast('error', 'Erro', result.error);
             }
         } catch (error) {
-            showToast('error', 'Erro', 'NÃ£o foi possÃ­vel atualizar a conta');
+            showToast('error', 'Erro', 'Nao foi possivel atualizar a conta');
         }
     });
 }
@@ -934,7 +934,7 @@ function confirmDeleteAccount(id) {
     const account = accounts.find(a => a.id === id);
     if (!account) return;
 
-    document.getElementById('modal-title').textContent = 'Confirmar ExclusÃ£o';
+    document.getElementById('modal-title').textContent = 'Confirmar Exclusao';
     document.getElementById('modal-body').innerHTML = `
     <div style="text-align: center; padding: 20px 0;">
       <svg viewBox="0 0 24 24" fill="none" stroke="var(--error-500)" stroke-width="2" style="width: 64px; height: 64px; margin-bottom: 16px;">
@@ -944,8 +944,8 @@ function confirmDeleteAccount(id) {
       </svg>
       <h3 style="margin-bottom: 8px;">Desativar conta?</h3>
       <p style="color: var(--gray-500); margin-bottom: 24px;">
-        A conta de <strong>${sanitizeHTML(account.holder_name)}</strong> serÃ¡ desativada.<br>
-        Esta aÃ§Ã£o pode ser revertida posteriormente.
+        A conta de <strong>${sanitizeHTML(account.holder_name)}</strong> sera desativada.<br>
+        Esta acao pode ser revertida posteriormente.
       </p>
       <div style="display: flex; gap: 12px;">
         <button class="btn btn-ghost" style="flex: 1;" onclick="showAccountDetails('${id}')">Cancelar</button>
@@ -968,7 +968,7 @@ async function deleteAccount(id) {
             showToast('error', 'Erro', result.error);
         }
     } catch (error) {
-        showToast('error', 'Erro', 'NÃ£o foi possÃ­vel desativar a conta');
+        showToast('error', 'Erro', 'Nao foi possivel desativar a conta');
     }
 }
 
