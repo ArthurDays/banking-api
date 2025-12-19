@@ -1,4 +1,5 @@
-﻿const express = require('express');
+﻿// require('dotenv').config(); // Loaded in database.js
+const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const path = require('path');
@@ -90,6 +91,23 @@ app.use((req, res, next) => {
     next();
 });
 
+// Load routes
+const accountsRoutes = require('./routes/accounts');
+const transactionsRoutes = require('./routes/transactions');
+const { router: authRoutes } = require('./routes/auth');
+const assistantRoutes = require('./routes/assistant');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/accounts', accountsRoutes);
+app.use('/api/transactions', transactionsRoutes);
+app.use('/api/assistant', assistantRoutes);
+
+// Swagger Documentation
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(specs, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'NeoBank API Docs'
+}));
+
 // Rota de saude
 app.get('/api/health', (req, res) => {
     res.json({
@@ -99,40 +117,23 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// Rota para servir o frontend em qualquer rota nao-API
+app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+        res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+    } else {
+        res.status(404).json({ success: false, error: 'Endpoint nao encontrado' });
+    }
+});
+
+// Error handler global (production safe)
+app.use(secureErrorHandler);
+
 // Inicializar banco de dados e depois iniciar servidor
 async function start() {
     try {
         await initDatabase();
         console.log('[OK] Banco de dados inicializado');
-
-        // Carregar rotas apos inicializacao do banco
-        const accountsRoutes = require('./routes/accounts');
-        const transactionsRoutes = require('./routes/transactions');
-        const { router: authRoutes } = require('./routes/auth');
-        const assistantRoutes = require('./routes/assistant');
-
-        app.use('/api/auth', authRoutes);
-        app.use('/api/accounts', accountsRoutes);
-        app.use('/api/transactions', transactionsRoutes);
-        app.use('/api/assistant', assistantRoutes);
-
-        // Swagger Documentation
-        app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(specs, {
-            customCss: '.swagger-ui .topbar { display: none }',
-            customSiteTitle: 'NeoBank API Docs'
-        }));
-
-        // Rota para servir o frontend em qualquer rota nao-API
-        app.get('*', (req, res) => {
-            if (!req.path.startsWith('/api')) {
-                res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-            } else {
-                res.status(404).json({ success: false, error: 'Endpoint nao encontrado' });
-            }
-        });
-
-        // Error handler global (production safe)
-        app.use(secureErrorHandler);
 
         const server = app.listen(PORT, () => {
             console.log(`
@@ -169,12 +170,21 @@ async function start() {
             });
         };
 
+        return server;
     } catch (error) {
         console.error('[ERROR] Erro ao iniciar:', error);
-        process.exit(1);
+        // Only exit in production if it's the main module
+        if (require.main === module) {
+            process.exit(1);
+        }
+        throw error;
     }
 }
 
-start();
+// Automatically start if run directly
+if (require.main === module) {
+    start();
+}
 
 module.exports = app;
+module.exports.start = start;

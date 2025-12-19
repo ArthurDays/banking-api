@@ -17,7 +17,7 @@ describe('Auth Endpoints', () => {
 
             expect(res.statusCode).toBe(201);
             expect(res.body.success).toBe(true);
-            expect(res.body.data).toHaveProperty('token');
+            expect(res.body.data).toHaveProperty('accessToken');
             expect(res.body.data.user).toHaveProperty('id');
             expect(res.body.data.user.email).toBe(testUser.email.toLowerCase());
         });
@@ -65,8 +65,8 @@ describe('Auth Endpoints', () => {
 
             expect(res.statusCode).toBe(200);
             expect(res.body.success).toBe(true);
-            expect(res.body.data).toHaveProperty('token');
-            authToken = res.body.data.token;
+            expect(res.body.data).toHaveProperty('accessToken');
+            authToken = res.body.data.accessToken;
         });
 
         it('should fail with wrong password', async () => {
@@ -104,7 +104,7 @@ describe('Auth Endpoints', () => {
                     password: testUser.password
                 });
 
-            const token = loginRes.body.data.token;
+            const token = loginRes.body.data.accessToken;
 
             const res = await request(app)
                 .get('/api/auth/me')
