@@ -132,6 +132,15 @@
           </svg>
           <span>PIX</span>
         </a>
+        <a href="#" class="nav-item" data-section="assistant">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+            <line x1="9" y1="9" x2="9.01" y2="9" />
+            <line x1="15" y1="9" x2="15.01" y2="9" />
+          </svg>
+          <span>Assistente IA</span>
+        </a>
       </nav>
 
       <div class="sidebar-footer">
@@ -456,6 +465,50 @@
                     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                   </svg>
                   Enviar PIX
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Assistant Section -->
+        <section id="assistant-section" class="section">
+          <div class="assistant-container">
+            <div class="chat-card">
+              <div class="chat-header">
+                <div class="chat-avatar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                    <line x1="9" y1="9" x2="9.01" y2="9" />
+                    <line x1="15" y1="9" x2="15.01" y2="9" />
+                  </svg>
+                </div>
+                <div class="chat-info">
+                  <h3>NeoAssistente</h3>
+                  <p>Seu assistente bancario inteligente</p>
+                </div>
+              </div>
+              <div class="chat-messages" id="chat-messages">
+                <div class="chat-message assistant">
+                  <div class="message-content">
+                    Ola! Sou o NeoAssistente, seu assistente bancario virtual. Posso ajudar com informacoes sobre suas
+                    contas e transacoes. Pergunte-me algo como:
+                    <ul style="margin-top: 10px; padding-left: 20px;">
+                      <li>Qual meu saldo total?</li>
+                      <li>Quais foram minhas ultimas transacoes?</li>
+                      <li>Quanto gastei em transferencias?</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <form id="chat-form" class="chat-input-container">
+                <input type="text" id="chat-input" placeholder="Digite sua pergunta..." required>
+                <button type="submit" class="btn btn-primary chat-send-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </svg>
                 </button>
               </form>
             </div>

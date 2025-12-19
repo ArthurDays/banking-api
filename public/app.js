@@ -369,7 +369,8 @@ function navigateTo(section) {
         accounts: ['Contas', 'Gerencie suas contas bancarias'],
         transactions: ['Transacoes', 'Historico de movimentacoes'],
         transfer: ['Transferir', 'Envie dinheiro entre contas'],
-        pix: ['PIX', 'Transferencia instantanea']
+        pix: ['PIX', 'Transferencia instantanea'],
+        assistant: ['Assistente IA', 'Seu assistente bancario inteligente']
     };
 
     pageTitle.textContent = titles[section][0];
@@ -1092,3 +1093,78 @@ window.loadTransactions = loadTransactions;
 window.loadDashboard = loadDashboard;
 window.exportStatementPDF = exportStatementPDF;
 window.exportStatementCSV = exportStatementCSV;
+
+// ==============================
+// ASSISTANT CHAT FUNCTIONS
+// ==============================
+
+function initChat() {
+    const chatForm = document.getElementById('chat-form');
+    if (!chatForm) return;
+
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('chat-input');
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        // Add user message
+        addChatMessage(message, 'user');
+        input.value = '';
+
+        // Show typing indicator
+        showTypingIndicator();
+
+        try {
+            const result = await apiRequest('/assistant/chat', {
+                method: 'POST',
+                body: JSON.stringify({ message })
+            });
+
+            removeTypingIndicator();
+
+            if (result.success) {
+                addChatMessage(result.data.message, 'assistant');
+            } else {
+                addChatMessage(result.error || 'Desculpe, ocorreu um erro. Tente novamente.', 'assistant');
+            }
+        } catch (error) {
+            removeTypingIndicator();
+            addChatMessage('Desculpe, nao foi possivel processar sua pergunta. Verifique se a API key do Gemini esta configurada.', 'assistant');
+        }
+    });
+}
+
+function addChatMessage(text, type) {
+    const container = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${type}`;
+    messageDiv.innerHTML = `<div class="message-content">${sanitizeHTML(text)}</div>`;
+    container.appendChild(messageDiv);
+    container.scrollTop = container.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const container = document.getElementById('chat-messages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'chat-message assistant typing';
+    typingDiv.id = 'typing-indicator';
+    typingDiv.innerHTML = `
+        <div class="message-content">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    `;
+    container.appendChild(typingDiv);
+    container.scrollTop = container.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    const indicator = document.getElementById('typing-indicator');
+    if (indicator) indicator.remove();
+}
+
+// Initialize chat when DOM is ready
+document.addEventListener('DOMContentLoaded', initChat);

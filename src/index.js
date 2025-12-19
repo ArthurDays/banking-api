@@ -109,10 +109,12 @@ async function start() {
         const accountsRoutes = require('./routes/accounts');
         const transactionsRoutes = require('./routes/transactions');
         const { router: authRoutes } = require('./routes/auth');
+        const assistantRoutes = require('./routes/assistant');
 
         app.use('/api/auth', authRoutes);
         app.use('/api/accounts', accountsRoutes);
         app.use('/api/transactions', transactionsRoutes);
+        app.use('/api/assistant', assistantRoutes);
 
         // Swagger Documentation
         app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(specs, {
