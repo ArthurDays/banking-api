@@ -33,7 +33,7 @@ function rateLimiter(req, res, next) {
     if (record.count >= RATE_LIMIT_MAX) {
         return res.status(429).json({
             success: false,
-            error: 'Muitas requisiÃ§Ãµes. Tente novamente em alguns minutos.'
+            error: 'Muitas requisicoes. Tente novamente em alguns minutos.'
         });
     }
 
@@ -77,10 +77,10 @@ app.use(helmet({
 
 // Middlewares
 app.use(cors(corsOptions));
-app.use(express.json({ limit: '10kb' })); // Limitar tamanho do body
+app.use(express.json({ limit: '10kb' }));
 app.use(rateLimiter);
 
-// Servir arquivos estÃ¡ticos do frontend
+// Servir arquivos estaticos do frontend
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Logging middleware
@@ -90,7 +90,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Rota de saÃºde
+// Rota de saude
 app.get('/api/health', (req, res) => {
     res.json({
         status: 'online',
@@ -103,9 +103,9 @@ app.get('/api/health', (req, res) => {
 async function start() {
     try {
         await initDatabase();
-        console.log('âœ… Banco de dados inicializado');
+        console.log('[OK] Banco de dados inicializado');
 
-        // Carregar rotas apÃ³s inicializaÃ§Ã£o do banco
+        // Carregar rotas apos inicializacao do banco
         const accountsRoutes = require('./routes/accounts');
         const transactionsRoutes = require('./routes/transactions');
         const { router: authRoutes } = require('./routes/auth');
@@ -120,12 +120,12 @@ async function start() {
             customSiteTitle: 'NeoBank API Docs'
         }));
 
-        // Rota para servir o frontend em qualquer rota nÃ£o-API
+        // Rota para servir o frontend em qualquer rota nao-API
         app.get('*', (req, res) => {
             if (!req.path.startsWith('/api')) {
                 res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
             } else {
-                res.status(404).json({ success: false, error: 'Endpoint nÃ£o encontrado' });
+                res.status(404).json({ success: false, error: 'Endpoint nao encontrado' });
             }
         });
 
@@ -134,14 +134,15 @@ async function start() {
 
         const server = app.listen(PORT, () => {
             console.log(`
-â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
-â•‘                   BANKING API                            â•‘
-â• â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•£
-â•‘  ðŸš€ Servidor rodando na porta ${PORT}                       â•‘
-â•‘  ðŸ“ Frontend: http://localhost:${PORT}                      â•‘
-â•‘  ðŸ“š API: http://localhost:${PORT}/api                       â•‘
-â•‘  ðŸ”Œ WebSocket: ws://localhost:${PORT}                       â•‘
-â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+============================================================
+                     BANKING API                            
+============================================================
+  Servidor rodando na porta ${PORT}                       
+  Frontend: http://localhost:${PORT}                      
+  API: http://localhost:${PORT}/api                       
+  Docs: http://localhost:${PORT}/api/docs                  
+  WebSocket: ws://localhost:${PORT}                       
+============================================================
       `);
         });
 
@@ -150,10 +151,10 @@ async function start() {
         const wss = new WebSocket.Server({ server });
 
         wss.on('connection', (ws) => {
-            console.log('ðŸ“¡ Novo cliente WebSocket conectado');
+            console.log('[WS] Novo cliente WebSocket conectado');
 
             ws.on('close', () => {
-                console.log('ðŸ“¡ Cliente WebSocket desconectado');
+                console.log('[WS] Cliente WebSocket desconectado');
             });
         });
 
@@ -167,7 +168,7 @@ async function start() {
         };
 
     } catch (error) {
-        console.error('âŒ Erro ao iniciar:', error);
+        console.error('[ERROR] Erro ao iniciar:', error);
         process.exit(1);
     }
 }
@@ -175,5 +176,3 @@ async function start() {
 start();
 
 module.exports = app;
-
-
