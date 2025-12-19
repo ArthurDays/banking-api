@@ -6,15 +6,33 @@ API de transacoes bancarias com autenticacao JWT, desenvolvida com Node.js, Expr
 
 ## Screenshots
 
-### Tela de Login
-![Login](docs/screenshots/01_login.png)
+### 1. Tela de Login
+![Login](docs/screenshots/login.png)
+Permite que usuários existentes acessem o sistema. Novos usuários podem alternar para a aba de cadastro.
 
-A tela de login permite que usuarios existentes acessem o sistema com email e senha. Novos usuarios podem criar uma conta clicando na aba "Criar Conta".
+### 2. Tela de Registro
+![Registro](docs/screenshots/registro.png)
+Interface para criação de novas contas de usuário, coletando nome, email e senha com validações em tempo real.
 
-### Documentacao Swagger (API Docs)
+### 3. Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
+Visão geral do sistema com saldo consolidado, gráficos de movimentação (Entradas vs Saídas) e resumo das contas.
+
+### 4. Gerenciamento de Contas
+![Contas](docs/screenshots/contas.png)
+Lista todas as contas bancárias cadastradas, permitindo a criação de novas contas, edição de dados e desativação.
+
+### 5. Histórico de Transações
+![Transações](docs/screenshots/transacoes.png)
+Extrato detalhado de todas as operações (Depósitos, Saques, Transferências e PIX) com filtros e busca.
+
+### 6. Perfil do Usuário
+![Perfil](docs/screenshots/perfil.png)
+Menu de gerenciamento de perfil, onde o usuário pode visualizar seus dados e realizar logout de forma segura.
+
+### 7. Documentação Swagger (API Docs)
 ![Swagger](docs/screenshots/02_swagger.png)
-
-Documentacao interativa da API disponivel em `/api/docs`. Permite testar todos os endpoints diretamente no navegador.
+Documentação interativa disponível em `/api/docs` para desenvolvedores explorarem e testarem os endpoints.
 
 ---
 
