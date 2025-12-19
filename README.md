@@ -1,30 +1,30 @@
-# 🏦 NeoBank API
+﻿# ðŸ¦ NeoBank API
 
-[![CI/CD Pipeline](https://github.com/YOUR_USERNAME/banking-api/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/banking-api/actions/workflows/ci.yml)
+[![CI/CD Pipeline](https://github.com/ArthurDays/banking-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ArthurDays/banking-api/actions/workflows/ci.yml)
 
-API de transações bancárias com autenticação JWT, desenvolvida com Node.js, Express e SQLite.
+API de transaÃ§Ãµes bancÃ¡rias com autenticaÃ§Ã£o JWT, desenvolvida com Node.js, Express e SQLite.
 
-## 🔒 Funcionalidades de Segurança
+## ðŸ”’ Funcionalidades de SeguranÃ§a
 
-- ✅ Autenticação JWT com Refresh Tokens
-- ✅ Rate Limiting (100 req/min global, 5 tentativas de login/min)
-- ✅ Helmet (HTTP Security Headers)
-- ✅ Validação de UUID e sanitização de inputs
-- ✅ Proteção contra brute force
+- âœ… AutenticaÃ§Ã£o JWT com Refresh Tokens
+- âœ… Rate Limiting (100 req/min global, 5 tentativas de login/min)
+- âœ… Helmet (HTTP Security Headers)
+- âœ… ValidaÃ§Ã£o de UUID e sanitizaÃ§Ã£o de inputs
+- âœ… ProteÃ§Ã£o contra brute force
 
-## 🚀 Instalação
+## ðŸš€ InstalaÃ§Ã£o
 
 ```bash
 npm install
 ```
 
-## ▶️ Executar
+## â–¶ï¸ Executar
 
 ```bash
 # Modo desenvolvimento (com hot reload)
 npm run dev
 
-# Modo produção
+# Modo produÃ§Ã£o
 npm start
 
 # Testes
@@ -34,57 +34,57 @@ npm test
 docker-compose up --build
 ```
 
-A API estará disponível em `http://localhost:3000`
+A API estarÃ¡ disponÃ­vel em `http://localhost:3000`
 
-## 📚 Endpoints
+## ðŸ“š Endpoints
 
-### Autenticação
+### AutenticaÃ§Ã£o
 
-| Método | Endpoint | Descrição |
+| MÃ©todo | Endpoint | DescriÃ§Ã£o |
 |--------|----------|-----------|
-| POST | `/api/auth/register` | Registrar novo usuário |
+| POST | `/api/auth/register` | Registrar novo usuÃ¡rio |
 | POST | `/api/auth/login` | Login (retorna access e refresh token) |
 | POST | `/api/auth/refresh` | Renovar access token |
 | POST | `/api/auth/logout` | Invalidar refresh token |
-| GET | `/api/auth/me` | Dados do usuário atual |
+| GET | `/api/auth/me` | Dados do usuÃ¡rio atual |
 
-### Contas Bancárias (🔐 Protegido)
+### Contas BancÃ¡rias (ðŸ” Protegido)
 
-| Método | Endpoint | Descrição |
+| MÃ©todo | Endpoint | DescriÃ§Ã£o |
 |--------|----------|-----------|
 | GET | `/api/accounts` | Listar todas as contas |
 | GET | `/api/accounts/:id` | Buscar conta por ID |
 | GET | `/api/accounts/:id/balance` | Consultar saldo |
 | GET | `/api/accounts/:id/statement` | Consultar extrato |
-| POST | `/api/accounts` | Criar nova conta 🔐 |
-| PUT | `/api/accounts/:id` | Atualizar conta 🔐 |
-| DELETE | `/api/accounts/:id` | Desativar conta 🔐 |
+| POST | `/api/accounts` | Criar nova conta ðŸ” |
+| PUT | `/api/accounts/:id` | Atualizar conta ðŸ” |
+| DELETE | `/api/accounts/:id` | Desativar conta ðŸ” |
 
-### Transações (🔐 Protegido)
+### TransaÃ§Ãµes (ðŸ” Protegido)
 
-| Método | Endpoint | Descrição |
+| MÃ©todo | Endpoint | DescriÃ§Ã£o |
 |--------|----------|-----------|
-| GET | `/api/transactions` | Listar transações |
-| GET | `/api/transactions/:id` | Buscar transação |
-| POST | `/api/transactions/deposit` | Realizar depósito 🔐 |
-| POST | `/api/transactions/withdraw` | Realizar saque 🔐 |
-| POST | `/api/transactions/transfer` | Transferência 🔐 |
-| POST | `/api/transactions/pix` | Realizar PIX 🔐 |
+| GET | `/api/transactions` | Listar transaÃ§Ãµes |
+| GET | `/api/transactions/:id` | Buscar transaÃ§Ã£o |
+| POST | `/api/transactions/deposit` | Realizar depÃ³sito ðŸ” |
+| POST | `/api/transactions/withdraw` | Realizar saque ðŸ” |
+| POST | `/api/transactions/transfer` | TransferÃªncia ðŸ” |
+| POST | `/api/transactions/pix` | Realizar PIX ðŸ” |
 
-### Documentação
+### DocumentaÃ§Ã£o
 
-| Método | Endpoint | Descrição |
+| MÃ©todo | Endpoint | DescriÃ§Ã£o |
 |--------|----------|-----------|
 | GET | `/api/docs` | Swagger UI |
 | GET | `/api/health` | Status da API |
 
-## 📝 Exemplos de Uso
+## ðŸ“ Exemplos de Uso
 
-### Registrar usuário
+### Registrar usuÃ¡rio
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"name": "João", "email": "joao@email.com", "password": "senha123"}'
+  -d '{"name": "JoÃ£o", "email": "joao@email.com", "password": "senha123"}'
 ```
 
 ### Login
@@ -107,7 +107,7 @@ curl -X POST http://localhost:3000/api/accounts \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer SEU_TOKEN" \
   -d '{
-    "holder_name": "João Silva",
+    "holder_name": "JoÃ£o Silva",
     "document": "12345678901",
     "bank_code": "001",
     "agency": "1234",
@@ -116,7 +116,7 @@ curl -X POST http://localhost:3000/api/accounts \
   }'
 ```
 
-## 🛠️ Stack
+## ðŸ› ï¸ Stack
 
 - **Runtime:** Node.js 20
 - **Framework:** Express.js
@@ -127,27 +127,28 @@ curl -X POST http://localhost:3000/api/accounts \
 - **Tests:** Jest + Supertest
 - **CI/CD:** GitHub Actions
 
-## 📁 Estrutura
+## ðŸ“ Estrutura
 
 ```
 banking-api/
-├── src/
-│   ├── index.js          # Entry point
-│   ├── database.js       # SQLite setup
-│   ├── swagger.js        # OpenAPI config
-│   ├── middleware/
-│   │   └── security.js   # Security middlewares
-│   └── routes/
-│       ├── auth.js       # Authentication
-│       ├── accounts.js   # Accounts CRUD
-│       └── transactions.js
-├── public/               # Frontend
-├── tests/               # Jest tests
-├── .github/workflows/   # CI/CD
-├── Dockerfile
-└── docker-compose.yml
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ index.js          # Entry point
+â”‚   â”œâ”€â”€ database.js       # SQLite setup
+â”‚   â”œâ”€â”€ swagger.js        # OpenAPI config
+â”‚   â”œâ”€â”€ middleware/
+â”‚   â”‚   â””â”€â”€ security.js   # Security middlewares
+â”‚   â””â”€â”€ routes/
+â”‚       â”œâ”€â”€ auth.js       # Authentication
+â”‚       â”œâ”€â”€ accounts.js   # Accounts CRUD
+â”‚       â””â”€â”€ transactions.js
+â”œâ”€â”€ public/               # Frontend
+â”œâ”€â”€ tests/               # Jest tests
+â”œâ”€â”€ .github/workflows/   # CI/CD
+â”œâ”€â”€ Dockerfile
+â””â”€â”€ docker-compose.yml
 ```
 
-## 📄 Licença
+## ðŸ“„ LicenÃ§a
 
 MIT
+
