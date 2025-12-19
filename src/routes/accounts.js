@@ -195,6 +195,18 @@ router.post('/', authenticateToken, (req, res) => {
             return res.status(409).json({ success: false, error: 'Documento ja cadastrado' });
         }
 
+        // Verificar se combinacao de Banco/Agencia/Conta ja existe
+        const duplicateAccount = queryOne(
+            'SELECT id FROM accounts WHERE bank_code = ? AND agency = ? AND account_number = ?',
+            [bank_code, agency, account_number]
+        );
+        if (duplicateAccount) {
+            return res.status(409).json({
+                success: false,
+                error: 'Esta combinacao de Banco, Agencia e Conta ja esta em uso'
+            });
+        }
+
         // Sanitize inputs
         const sanitizedName = sanitizeString(holder_name);
 

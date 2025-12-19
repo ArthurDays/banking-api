@@ -30,7 +30,8 @@ async function initDatabase() {
       balance REAL DEFAULT 0,
       status TEXT DEFAULT 'active',
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(bank_code, agency, account_number)
     );
   `);
 
