@@ -1,214 +1,116 @@
-﻿# NeoBank API
+# NeoBank API
 
-[![CI/CD Pipeline](https://github.com/ArthurDays/banking-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ArthurDays/banking-api/actions/workflows/ci.yml)
+[![CI](https://github.com/ArthurDays/banking-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ArthurDays/banking-api/actions/workflows/ci.yml)
+[![Node.js](https://img.shields.io/badge/Node.js-20-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 
-API de transacoes bancarias com autenticacao JWT, desenvolvida com Node.js, Express e SQLite.
+Aplicação bancária full-stack construída para demonstrar engenharia de APIs, autenticação, segurança, testes e entrega em contêiner. Inclui gestão de contas, depósitos, saques, transferências, PIX, atualização em tempo real e um assistente opcional com Gemini.
 
-## Screenshots
+> Projeto educacional. Não utilize para armazenar dinheiro real ou dados financeiros de produção.
 
-### 1. Tela de Login
-![Login](docs/screenshots/login.png)
-Permite que usuários existentes acessem o sistema. Novos usuários podem alternar para a aba de cadastro.
+## Destaques de engenharia
 
-### 2. Tela de Registro
-![Registro](docs/screenshots/registro.png)
-Interface para criação de novas contas de usuário, coletando nome, email e senha com validações em tempo real.
+- Autenticação JWT com access e refresh tokens.
+- Senhas protegidas com bcrypt e controles contra força bruta.
+- Helmet, CORS, rate limiting, validação e sanitização de entradas.
+- Operações com UUID e persistência SQLite via `sql.js`.
+- Swagger/OpenAPI em `/api/docs` e atualizações via WebSocket.
+- Testes com Jest e Supertest, CI no GitHub Actions e execução com Docker.
+- Assistente com Gemini, habilitado quando `GEMINI_API_KEY` está configurada.
 
-### 3. Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
-Visão geral do sistema com saldo consolidado, gráficos de movimentação (Entradas vs Saídas) e resumo das contas.
+## Arquitetura
 
-### 4. Gerenciamento de Contas
-![Contas](docs/screenshots/contas.png)
-Lista todas as contas bancárias cadastradas, permitindo a criação de novas contas, edição de dados e desativação.
+```text
+Browser / API client
+        │
+        ▼
+Express API ── security middleware ── JWT authentication
+    │               │                       │
+    ├── accounts    ├── validation          ├── access token
+    ├── transactions├── rate limiting       └── refresh token
+    ├── assistant   └── error handling
+    ├── SQLite (sql.js)
+    └── WebSocket updates
+```
 
-### 5. Histórico de Transações
-![Transações](docs/screenshots/transacoes.png)
-Extrato detalhado de todas as operações (Depósitos, Saques, Transferências e PIX) com filtros e busca.
+## Execução local
 
-### 6. Perfil do Usuário
-![Perfil](docs/screenshots/perfil.png)
-Menu de gerenciamento de perfil, onde o usuário pode visualizar seus dados e realizar logout de forma segura.
-
-### 7. Documentação Swagger (API Docs)
-![Swagger](docs/screenshots/02_swagger.png)
-Documentação interativa disponível em `/api/docs` para desenvolvedores explorarem e testarem os endpoints.
-
----
-
-## Funcionalidades
-
-### Frontend
-- **Dashboard**: Visao geral com saldo total e graficos de transacoes
-- **Contas**: Gerenciamento de contas bancarias (criar, editar, desativar)
-- **Transacoes**: Historico completo de movimentacoes
-- **Transferencia**: Transferencia entre contas do sistema
-- **PIX**: Transferencia instantanea por chave PIX (CPF/CNPJ)
-- **Dark/Light Mode**: Alterne entre temas claro e escuro
-- **Export PDF/CSV**: Exporte extratos em PDF ou CSV
-
-### Backend (API)
-- Autenticacao JWT com Refresh Tokens
-- Rate Limiting (100 req/min global, 5 tentativas de login/min)
-- Helmet (HTTP Security Headers)
-- Validacao de UUID e sanitizacao de inputs
-- Protecao contra brute force
-- WebSocket para atualizacoes em tempo real
-
----
-
-## Instalacao
+Requer Node.js 20+ e npm.
 
 ```bash
+git clone https://github.com/ArthurDays/banking-api.git
+cd banking-api
 npm install
-```
-
-## Executar
-
-```bash
-# Modo desenvolvimento (com hot reload)
 npm run dev
+```
 
-# Modo producao
+Defina segredos próprios antes de executar fora de um ambiente local:
+
+```bash
+JWT_SECRET=troque-este-valor
+REFRESH_SECRET=troque-este-valor
+GEMINI_API_KEY=opcional
+ALLOWED_ORIGINS=http://localhost:3000
+```
+
+Comandos disponíveis:
+
+```bash
 npm start
-
-# Testes
 npm test
-
-# Docker
-docker-compose up --build
+npm run test:coverage
+docker compose up --build
 ```
 
-A API estara disponivel em `http://localhost:3000`
+- Aplicação: `http://localhost:3000`
+- API: `http://localhost:3000/api`
+- Swagger: `http://localhost:3000/api/docs`
+- Health check: `http://localhost:3000/api/health`
 
----
+## Principais endpoints
 
-## Endpoints da API
+| Área | Método | Endpoint | Descrição |
+| --- | --- | --- | --- |
+| Auth | `POST` | `/api/auth/register` | Cria usuário |
+| Auth | `POST` | `/api/auth/login` | Emite access e refresh tokens |
+| Auth | `POST` | `/api/auth/refresh` | Renova o access token |
+| Contas | `GET/POST` | `/api/accounts` | Lista ou cria contas |
+| Contas | `GET/PUT/DELETE` | `/api/accounts/:id` | Consulta, altera ou desativa conta |
+| Transações | `POST` | `/api/transactions/deposit` | Realiza depósito |
+| Transações | `POST` | `/api/transactions/withdraw` | Realiza saque |
+| Transações | `POST` | `/api/transactions/transfer` | Transfere entre contas |
+| Transações | `POST` | `/api/transactions/pix` | Realiza PIX |
 
-### Autenticacao
+A especificação completa e os schemas ficam disponíveis no Swagger.
 
-| Metodo | Endpoint | Descricao |
-|--------|----------|-----------|
-| POST | `/api/auth/register` | Registrar novo usuario |
-| POST | `/api/auth/login` | Login (retorna access e refresh token) |
-| POST | `/api/auth/refresh` | Renovar access token |
-| POST | `/api/auth/logout` | Invalidar refresh token |
-| GET | `/api/auth/me` | Dados do usuario atual |
+## Interface
 
-### Contas Bancarias (Requer Autenticacao)
+| Dashboard | Transações | API Docs |
+| --- | --- | --- |
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Transações](docs/screenshots/transacoes.png) | ![Swagger](docs/screenshots/02_swagger.png) |
 
-| Metodo | Endpoint | Descricao |
-|--------|----------|-----------|
-| GET | `/api/accounts` | Listar todas as contas |
-| GET | `/api/accounts/:id` | Buscar conta por ID |
-| GET | `/api/accounts/:id/balance` | Consultar saldo |
-| GET | `/api/accounts/:id/statement` | Consultar extrato |
-| POST | `/api/accounts` | Criar nova conta |
-| PUT | `/api/accounts/:id` | Atualizar conta |
-| DELETE | `/api/accounts/:id` | Desativar conta |
+## Estrutura
 
-### Transacoes (Requer Autenticacao)
-
-| Metodo | Endpoint | Descricao |
-|--------|----------|-----------|
-| GET | `/api/transactions` | Listar transacoes |
-| GET | `/api/transactions/:id` | Buscar transacao |
-| POST | `/api/transactions/deposit` | Realizar deposito |
-| POST | `/api/transactions/withdraw` | Realizar saque |
-| POST | `/api/transactions/transfer` | Transferencia |
-| POST | `/api/transactions/pix` | Realizar PIX |
-
-### Utilitarios
-
-| Metodo | Endpoint | Descricao |
-|--------|----------|-----------|
-| GET | `/api/docs` | Swagger UI |
-| GET | `/api/health` | Status da API |
-
----
-
-## Exemplos de Uso
-
-### Registrar usuario
-```bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Joao", "email": "joao@email.com", "password": "senha123"}'
+```text
+src/
+├── index.js
+├── database.js
+├── swagger.js
+├── middleware/security.js
+└── routes/
+    ├── auth.js
+    ├── accounts.js
+    ├── transactions.js
+    └── assistant.js
+public/                   # cliente web
+tests/                    # testes de API
+docs/screenshots/         # evidências visuais
+.github/workflows/        # integração contínua
 ```
 
-### Login
-```bash
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "joao@email.com", "password": "senha123"}'
-```
+## Segurança e limitações
 
-### Criar conta bancaria (autenticado)
-```bash
-curl -X POST http://localhost:3000/api/accounts \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer SEU_TOKEN" \
-  -d '{
-    "holder_name": "Joao Silva",
-    "document": "12345678901",
-    "bank_code": "001",
-    "agency": "1234",
-    "account_number": "12345-6",
-    "initial_balance": 1000
-  }'
-```
+Os segredos padrão facilitam apenas a demonstração local. Em implantação, forneça `JWT_SECRET` e `REFRESH_SECRET` fortes, limite `ALLOWED_ORIGINS` e use HTTPS. Esta aplicação não substitui uma infraestrutura financeira auditada.
 
-### Realizar deposito
-```bash
-curl -X POST http://localhost:3000/api/transactions/deposit \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer SEU_TOKEN" \
-  -d '{"account_id": "UUID_DA_CONTA", "amount": 500}'
-```
+## Licença
 
----
-
-## Stack Tecnologica
-
-| Categoria | Tecnologia |
-|-----------|------------|
-| Runtime | Node.js 20 |
-| Framework | Express.js |
-| Database | SQLite (sql.js) |
-| Auth | JWT + Refresh Tokens |
-| Security | Helmet, bcrypt, rate-limiting |
-| Docs | Swagger/OpenAPI |
-| Tests | Jest + Supertest |
-| CI/CD | GitHub Actions |
-| Container | Docker |
-
----
-
-## Estrutura do Projeto
-
-```
-banking-api/
-    src/
-        index.js          - Entry point
-        database.js       - SQLite setup
-        swagger.js        - OpenAPI config
-        middleware/
-            security.js   - Security middlewares
-        routes/
-            auth.js       - Authentication
-            accounts.js   - Accounts CRUD
-            transactions.js
-    public/               - Frontend
-    tests/                - Jest tests
-    docs/                 - Documentation
-        screenshots/      - App screenshots
-    .github/workflows/    - CI/CD
-    Dockerfile
-    docker-compose.yml
-```
-
----
-
-## Licenca
-
-MIT
+MIT.
