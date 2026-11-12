@@ -2,7 +2,9 @@
 
 [![CI/CD Pipeline](https://github.com/ArthurDays/banking-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ArthurDays/banking-api/actions/workflows/ci.yml)
 
-API de transacoes bancarias com autenticacao JWT, desenvolvida com Node.js, Express e SQLite.
+Demonstração de uma API de contas e transações com autenticação JWT, desenvolvida com Node.js, Express e SQLite.
+
+> **Escopo:** as operações representam movimentações no banco de dados da aplicação. O endpoint PIX simula uma transferência entre contas locais, buscando o destinatário por ID ou documento; não envia pagamentos à rede Pix ou a uma instituição financeira. Use dados fictícios na demonstração.
 
 ## Screenshots
 
@@ -43,7 +45,7 @@ Documentação interativa disponível em `/api/docs` para desenvolvedores explor
 - **Contas**: Gerenciamento de contas bancarias (criar, editar, desativar)
 - **Transacoes**: Historico completo de movimentacoes
 - **Transferencia**: Transferencia entre contas do sistema
-- **PIX**: Transferencia instantanea por chave PIX (CPF/CNPJ)
+- **PIX simulado**: transferência entre contas locais por ID ou documento (CPF/CNPJ)
 - **Dark/Light Mode**: Alterne entre temas claro e escuro
 - **Export PDF/CSV**: Exporte extratos em PDF ou CSV
 
@@ -116,7 +118,7 @@ A API estara disponivel em `http://localhost:3000`
 | POST | `/api/transactions/deposit` | Realizar deposito |
 | POST | `/api/transactions/withdraw` | Realizar saque |
 | POST | `/api/transactions/transfer` | Transferencia |
-| POST | `/api/transactions/pix` | Realizar PIX |
+| POST | `/api/transactions/pix` | Simular transferência PIX entre contas locais |
 
 ### Utilitarios
 
